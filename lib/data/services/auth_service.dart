@@ -12,35 +12,37 @@ abstract class AuthFirebaseService {
 
 class AuthFirebaseServiceImpl implements AuthFirebaseService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  //final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   @override
   Future<Either<String, UserModel>> signInWithGoogle() async {
-    try {
-      final googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) return Left('Sign in aborted by you');
 
-      final googleAuth = await googleUser.authentication;
+    throw UnimplementedError();
+    // try {
+    //   final googleUser = await _googleSignIn.signIn();
+    //   if (googleUser == null) return Left('Sign in aborted by you');
 
-      final credential = GoogleAuthProvider.credential(
-        idToken: googleAuth.idToken,
-        accessToken: googleAuth.accessToken,
-      );
+    //   final googleAuth = await googleUser.authentication;
 
-      final result = await _auth.signInWithCredential(credential);
-      final user = result.user;
+    //   final credential = GoogleAuthProvider.credential(
+    //     idToken: googleAuth.idToken,
+    //     accessToken: googleAuth.accessToken,
+    //   );
 
-      if (user == null) return Left('Google sign-in failed');
-      //sl<TodoFirebaseService>().createUserCollection(user.uid);
-      final resultUser = UserModel(
-        id: user.uid,
-        name: user.displayName ?? '',
-      );
+    //   final result = await _auth.signInWithCredential(credential);
+    //   final user = result.user;
 
-      return Right(resultUser);
-    } catch (e) {
-      return Left('Sign in failed: ${e.toString()}');
-    }
+    //   if (user == null) return Left('Google sign-in failed');
+    //   //sl<TodoFirebaseService>().createUserCollection(user.uid);
+    //   final resultUser = UserModel(
+    //     id: user.uid,
+    //     name: user.displayName ?? '',
+    //   );
+
+    //   return Right(resultUser);
+    // } catch (e) {
+    //   return Left('Sign in failed: ${e.toString()}');
+    // }
   }
 
   @override
@@ -60,7 +62,7 @@ class AuthFirebaseServiceImpl implements AuthFirebaseService {
   @override
   Future<Either<String, bool>> logout() async {
     try {
-      await _googleSignIn.signOut();
+     // await _googleSignIn.signOut();
       await _auth.signOut();
 
       return Right(true);
