@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'dart:math' as math;
 
 class AnimatedLogoWidget extends StatefulWidget {
   const AnimatedLogoWidget({super.key});
@@ -171,6 +170,7 @@ class _AnimatedLogoWidgetState extends State<AnimatedLogoWidget>
                     ),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
+                      // ignore: deprecated_member_use
                       color: Colors.white.withOpacity(0.05),
                     ),
                     child: Text(
@@ -178,6 +178,7 @@ class _AnimatedLogoWidgetState extends State<AnimatedLogoWidget>
                       style: GoogleFonts.inter(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
+                        // ignore: deprecated_member_use
                         color: Colors.white.withOpacity(0.8),
                         letterSpacing: 0.5,
                       ),

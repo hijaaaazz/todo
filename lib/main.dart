@@ -1,12 +1,18 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tudu/firebase_options.dart';
+import 'package:tudu/presentation/bloc/cubit/auth_cubit.dart';
 import 'package:tudu/presentation/pages/splash.dart';
 import 'package:tudu/service_locator.dart';
 
-
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
-  initializeDependencies();
- 
+   await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform
+
+  );
+  await initializeDependencies();
  
   runApp(const MyApp());
 }
@@ -17,7 +23,11 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context)=>AuthCubit()..checkAuthStatus())
+      ],
+      child: MaterialApp(
         debugShowCheckedModeBanner: false,
           title: 'TuDu',
           theme: ThemeData(
@@ -26,7 +36,7 @@ class MyApp extends StatelessWidget {
             useMaterial3: true,
           ),
           home: const SplashScreen(),
-      
+        ),
     );
   }
 }

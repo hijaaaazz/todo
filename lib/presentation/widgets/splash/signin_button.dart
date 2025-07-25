@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -38,6 +37,7 @@ class GoogleSignInButton extends StatelessWidget {
                           end: Alignment.centerRight,
                           colors: [
                             Colors.transparent,
+                            // ignore: deprecated_member_use
                             Colors.white.withOpacity(0.2),
                             Colors.transparent,
                           ],
@@ -65,6 +65,7 @@ class GoogleSignInButton extends StatelessWidget {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
+                                // ignore: deprecated_member_use
                                 color: Colors.white.withOpacity(0.1),
                                 width: 1,
                               ),

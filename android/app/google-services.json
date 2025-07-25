@@ -7,20 +7,12 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:519558552910:android:88759e8ba5bc290e51121f",
+        "mobilesdk_app_id": "1:519558552910:android:72da9dc1701b44b751121f",
         "android_client_info": {
-          "package_name": "com.hijaz.tudu"
+          "package_name": "com.example.tudu"
         }
       },
       "oauth_client": [
-        {
-          "client_id": "519558552910-4prcfqgbn1rfetsvgebdkohgku40r0sn.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.hijaz.tudu",
-            "certificate_hash": "ce538ef302affce4f30d91df0689b240bacf64ce"
-          }
-        },
         {
           "client_id": "519558552910-8qtsj8690bu698kv7jk2prr07futu7bl.apps.googleusercontent.com",
           "client_type": 3
