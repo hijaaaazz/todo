@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:tudu/presentation/pages/splash.dart';
+import 'package:tudu/service_locator.dart';
 
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  initializeDependencies();
  
  
   runApp(const MyApp());
