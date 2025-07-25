@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tudu/domain/enities/todo_entity.dart';
+import 'package:tudu/presentation/pages/todo.dart';
 
 class TodoItem extends StatefulWidget {
   final TodoEntity todo;
@@ -87,11 +88,11 @@ class _TodoEntityWidgetState extends State<TodoItem>
           child: InkWell(
             splashColor: Colors.transparent,
             onTap: () {
-              // Navigator.of(context).push(
-              //   MaterialPageRoute(
-              //     builder: (context) => TodoDetailedPage(todo: widget.todo),
-              //   ),
-              // );
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => TodoDetailedPage(todo: widget.todo),
+                ),
+              );
             },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

@@ -3,14 +3,19 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:tudu/data/models/add_todo_params.dart';
+import 'package:tudu/data/models/delete_todo_params.dart';
 import 'package:tudu/data/models/todo_model.dart';
+import 'package:tudu/data/models/toggle_todo_params.dart';
+import 'package:tudu/data/models/update_todo_params.dart';
 
 abstract class TodoFirebaseService {
   Future<Either<String, bool>> createUserCollection(String userId);
   Future<Either<String, List<TodoModel>>> getTodos(String userId);
-  Future<Either<String, TodoModel>> addTodo(AddTodoParams todo);
-  Future<Either<String, bool>> editTodo(String userId, TodoModel todo);
-  Future<Either<String, bool>> deleteTodo(String userId, String todoId);
+  Future<Either<String, TodoModel>> addTodo(AddTodoParams params);
+  Future<Either<String, TodoModel>> updateTodoTextOrDate(UpdateTodoParams params);
+  Future<Either<String, bool>> toggleTodoCompletion(ToggleTodoParams params);
+
+  Future<Either<String, bool>> deleteTodo(DeleteTodoParams params);
 }
 
 
@@ -84,32 +89,79 @@ class TodoFirebaseServiceImp implements TodoFirebaseService {
     }
   }
 
-  @override
-  Future<Either<String, bool>> editTodo(String userId, TodoModel todo) async {
-    try {
-      final todoRef = _firestore
-          .collection('users')
-          .doc(userId)
-          .collection('todos')
-          .doc(todo.id);
+@override
+Future<Either<String, TodoModel>> updateTodoTextOrDate(UpdateTodoParams params) async {
+  try {
+    final todoRef = _firestore
+        .collection('users')
+        .doc(params.userId)
+        .collection('todos')
+        .doc(params.id);
 
-      await todoRef.update(todo.toFirestore());
+    await todoRef.update({
+      'text': params.title,
+      'description': params.description,
+      'dueDate': params.duedate != null ? Timestamp.fromDate(params.duedate!) : null,
+    });
 
-      return const Right(true);
-    } catch (e) {
-      log(e.toString());
-      return Left('Failed to edit todo: ${e.toString()}');
+    // Get updated document
+    final updatedDoc = await todoRef.get();
+
+    if (updatedDoc.exists) {
+      final data = updatedDoc.data()!;
+      // Add the ID manually if needed
+      data['id'] = updatedDoc.id;
+
+      final updatedTodo = TodoModel.fromFirestore(data);
+      return Right(updatedTodo);
+    } else {
+      return Left('Todo not found after update');
     }
+  } catch (e) {
+    log('updateTodoTextOrDate error: $e');
+    return Left('Failed to update todo: ${e.toString()}');
   }
+}
+
+
+@override
+Future<Either<String, bool>> toggleTodoCompletion(ToggleTodoParams params) async {
+  try {
+    final todoRef = _firestore
+        .collection('users')
+        .doc(params.userId)
+        .collection('todos')
+        .doc(params.todoId);
+
+    // Update the isCompleted field
+    await todoRef.update({'isCompleted': params.status});
+
+    // Fetch the updated document
+    final updatedDoc = await todoRef.get();
+
+    if (updatedDoc.exists) {
+      final updatedData = updatedDoc.data();
+      final updatedStatus = updatedData?['isCompleted'] as bool? ?? false;
+      return Right(updatedStatus);
+    } else {
+      return Left('Todo not found after update.');
+    }
+  } catch (e) {
+    log('toggleTodoCompletion error: $e');
+    return Left('Failed to toggle completion: ${e.toString()}');
+  }
+}
+
+
 
   @override
-  Future<Either<String, bool>> deleteTodo(String userId, String todoId) async {
+  Future<Either<String, bool>> deleteTodo(DeleteTodoParams params) async {
     try {
       final todoRef = _firestore
           .collection('users')
-          .doc(userId)
+          .doc(params.userId)
           .collection('todos')
-          .doc(todoId);
+          .doc(params.id);
 
       await todoRef.delete();
 

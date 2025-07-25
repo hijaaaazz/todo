@@ -1,7 +1,9 @@
 import 'package:dartz/dartz.dart';
 import 'package:tudu/data/models/add_todo_params.dart';
+import 'package:tudu/data/models/delete_todo_params.dart';
 import 'package:tudu/data/models/search_params.dart';
 import 'package:tudu/data/models/todo_model.dart';
+import 'package:tudu/data/models/update_todo_params.dart';
 import 'package:tudu/data/services/todo_service.dart';
 import 'package:tudu/domain/enities/todo_entity.dart';
 import 'package:tudu/domain/repositories/todo_repository.dart';
@@ -30,11 +32,16 @@ Future<Either<String, TodoEntity>> addTodo(AddTodoParams params) async {
 
 
   @override
-  Future<Either<String, bool>> updateTodo(TodoModel todo, String userId) async {
-throw UnimplementedError();  }
+  Future<Either<String, TodoEntity>> updateTodo(UpdateTodoParams params) async {
+final result = await _service.updateTodoTextOrDate(params);
+  return result.fold(
+    (l) => Left(l),
+    (r) => Right(r.toEntity()),
+  );
+  }
 
   @override
-  Future<Either<String, bool>> deleteTodo(String todoId, String userId) async {
+  Future<Either<String, bool>> deleteTodo(DeleteTodoParams params) async {
 throw UnimplementedError();  }
 
   @override
