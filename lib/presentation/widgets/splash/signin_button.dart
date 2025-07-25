@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -37,7 +36,6 @@ class GoogleSignInButton extends StatelessWidget {
                           end: Alignment.centerRight,
                           colors: [
                             Colors.transparent,
-                            // ignore: deprecated_member_use
                             Colors.white.withOpacity(0.2),
                             Colors.transparent,
                           ],
@@ -65,7 +63,6 @@ class GoogleSignInButton extends StatelessWidget {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
-                                // ignore: deprecated_member_use
                                 color: Colors.white.withOpacity(0.1),
                                 width: 1,
                               ),
@@ -92,6 +89,7 @@ class GoogleSignInButton extends StatelessWidget {
                             key: const ValueKey("google_button"),
                             borderRadius: BorderRadius.circular(16),
                             onTap: () {
+                              context.read<AuthCubit>().signInWithGoogle();
                             },
                             child: Container(
                               height: buttonHeight,

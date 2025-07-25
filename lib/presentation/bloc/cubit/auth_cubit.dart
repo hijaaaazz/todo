@@ -28,6 +28,8 @@ class AuthCubit extends Cubit<AuthState> {
 
 
 Future<void> signInWithGoogle() async {
+
+  log("bloc started");
   try {
     emit(AuthLoading());
     final result = await sl<SignInwithGoogleUsecase>().call(params: NoParams());

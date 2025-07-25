@@ -2,6 +2,9 @@ import 'package:get_it/get_it.dart';
 import 'package:tudu/data/repositories/auth_repository.dart';
 import 'package:tudu/data/services/auth_service.dart';
 import 'package:tudu/domain/repositories/auth_repository.dart';
+import 'package:tudu/domain/usecases/authentication/current_user.dart';
+import 'package:tudu/domain/usecases/authentication/logout.dart';
+import 'package:tudu/domain/usecases/authentication/sign_in.dart';
 
 final sl = GetIt.instance;
 
@@ -18,6 +21,19 @@ Future<void> initializeDependencies()async{
   sl.registerLazySingleton<AuthRepository>(
     ()=> AuthRepoImp()
   );
+
+
+  sl.registerLazySingleton<GetCurrentUserUsecase>(
+    ()=> GetCurrentUserUsecase()
+  );
+  sl.registerLazySingleton<LogoutUsecase>(
+    ()=> LogoutUsecase()
+  );
+
+  sl.registerLazySingleton<SignInwithGoogleUsecase>(
+    ()=> SignInwithGoogleUsecase()
+  );
+
 
  
 }
