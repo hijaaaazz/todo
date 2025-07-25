@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tudu/data/models/add_todo_params.dart';
 import 'package:tudu/domain/enities/todo_entity.dart';
-import 'package:tudu/domain/usecases/todo/get_to.dart';
+import 'package:tudu/domain/usecases/todo/add_todo.dart';
+import 'package:tudu/domain/usecases/todo/get_todo.dart';
 import 'package:tudu/service_locator.dart';
 import 'todo_event.dart';
 import 'todo_state.dart';
