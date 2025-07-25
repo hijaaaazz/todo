@@ -8,6 +8,7 @@ import 'package:tudu/domain/repositories/todo_repository.dart';
 import 'package:tudu/domain/usecases/authentication/current_user.dart';
 import 'package:tudu/domain/usecases/authentication/logout.dart';
 import 'package:tudu/domain/usecases/authentication/sign_in.dart';
+import 'package:tudu/domain/usecases/todo/get_todo.dart';
 
 final sl = GetIt.instance;
 
@@ -34,6 +35,12 @@ Future<void> initializeDependencies()async{
 
 
 
+
+//usecase
+
+  sl.registerLazySingleton<GetTodosUsecase>(
+    ()=> GetTodosUsecase()
+  );
   sl.registerLazySingleton<GetCurrentUserUsecase>(
     ()=> GetCurrentUserUsecase()
   );
