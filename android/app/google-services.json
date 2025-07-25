@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "519558552910",
+    "project_id": "tudu00000",
+    "storage_bucket": "tudu00000.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:519558552910:android:88759e8ba5bc290e51121f",
+        "android_client_info": {
+          "package_name": "com.hijaz.tudu"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "519558552910-4prcfqgbn1rfetsvgebdkohgku40r0sn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hijaz.tudu",
+            "certificate_hash": "ce538ef302affce4f30d91df0689b240bacf64ce"
+          }
+        },
+        {
+          "client_id": "519558552910-8qtsj8690bu698kv7jk2prr07futu7bl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCeaA9dt_jJLpS04My9dnSi8mU7vkBabLo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "519558552910-8qtsj8690bu698kv7jk2prr07futu7bl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
