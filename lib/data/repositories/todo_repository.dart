@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:tudu/data/models/add_todo_params.dart';
 import 'package:tudu/data/models/search_params.dart';
 import 'package:tudu/data/models/todo_model.dart';
+import 'package:tudu/data/services/todo_service.dart';
 import 'package:tudu/domain/enities/todo_entity.dart';
 import 'package:tudu/domain/repositories/todo_repository.dart';
 import 'package:tudu/service_locator.dart';

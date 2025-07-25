@@ -1,7 +1,10 @@
 import 'package:get_it/get_it.dart';
 import 'package:tudu/data/repositories/auth_repository.dart';
+import 'package:tudu/data/repositories/todo_repository.dart';
 import 'package:tudu/data/services/auth_service.dart';
+import 'package:tudu/data/services/todo_service.dart';
 import 'package:tudu/domain/repositories/auth_repository.dart';
+import 'package:tudu/domain/repositories/todo_repository.dart';
 import 'package:tudu/domain/usecases/authentication/current_user.dart';
 import 'package:tudu/domain/usecases/authentication/logout.dart';
 import 'package:tudu/domain/usecases/authentication/sign_in.dart';
@@ -15,12 +18,20 @@ Future<void> initializeDependencies()async{
     ()=> AuthFirebaseServiceImpl()
   );
 
+  sl.registerLazySingleton<TodoFirebaseService>(
+    ()=> TodoFirebaseServiceImp()
+  );
 
-  
+
   //repositories
   sl.registerLazySingleton<AuthRepository>(
     ()=> AuthRepoImp()
   );
+
+  sl.registerLazySingleton<TodoRepository>(
+    ()=> TodoRepoImp()
+  );
+
 
 
   sl.registerLazySingleton<GetCurrentUserUsecase>(
