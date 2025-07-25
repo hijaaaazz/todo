@@ -3,6 +3,7 @@ import 'package:tudu/data/models/add_todo_params.dart';
 import 'package:tudu/data/models/delete_todo_params.dart';
 import 'package:tudu/data/models/search_params.dart';
 import 'package:tudu/data/models/todo_model.dart';
+import 'package:tudu/data/models/toggle_todo_params.dart';
 import 'package:tudu/data/models/update_todo_params.dart';
 import 'package:tudu/data/services/todo_service.dart';
 import 'package:tudu/domain/enities/todo_entity.dart';
@@ -47,4 +48,10 @@ throw UnimplementedError();  }
   @override
   Future<Either<String, List<TodoModel>>> getSearchResults(SearchParams params) async {
 throw UnimplementedError();  }
+
+  @override
+  Future<Either<String, bool>> toggleTodo(ToggleTodoParams params) {
+    // TODO: implement toggleTodo
+    throw UnimplementedError();
+  }
 }
