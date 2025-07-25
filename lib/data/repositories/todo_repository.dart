@@ -1,0 +1,42 @@
+import 'package:dartz/dartz.dart';
+import 'package:tudu/data/models/add_todo_params.dart';
+import 'package:tudu/data/models/search_params.dart';
+import 'package:tudu/data/models/todo_model.dart';
+import 'package:tudu/domain/enities/todo_entity.dart';
+import 'package:tudu/domain/repositories/todo_repository.dart';
+import 'package:tudu/service_locator.dart';
+
+class TodoRepoImp extends TodoRepository {
+  final _service = sl<TodoFirebaseService>();
+
+  @override
+  Future<Either<String, List<TodoEntity>>> getTodos(String userId) async {
+    final result = await _service.getTodos(userId);
+    return result.fold(
+      (l) => Left(l),
+      (r) => Right(r.map((e) => e.toEntity()).toList()),
+    );
+  }
+
+ @override
+Future<Either<String, TodoEntity>> addTodo(AddTodoParams params) async {
+  final result = await _service.addTodo(params);
+  return result.fold(
+    (l) => Left(l),
+    (r) => Right(r.toEntity()),
+  );
+}
+
+
+  @override
+  Future<Either<String, bool>> updateTodo(TodoModel todo, String userId) async {
+throw UnimplementedError();  }
+
+  @override
+  Future<Either<String, bool>> deleteTodo(String todoId, String userId) async {
+throw UnimplementedError();  }
+
+  @override
+  Future<Either<String, List<TodoModel>>> getSearchResults(SearchParams params) async {
+throw UnimplementedError();  }
+}
