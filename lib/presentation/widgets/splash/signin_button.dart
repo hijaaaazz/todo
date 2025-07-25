@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tudu/presentation/bloc/cubit/auth_cubit.dart';
-import 'package:tudu/presentation/bloc/cubit/auth_state.dart';
+import 'package:tudu/presentation/bloc/auth/auth_cubit.dart';
+import 'package:tudu/presentation/bloc/auth/auth_state.dart';
 
 class GoogleSignInButton extends StatelessWidget {
   const GoogleSignInButton({super.key});

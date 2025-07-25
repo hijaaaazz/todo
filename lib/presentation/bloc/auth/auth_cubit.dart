@@ -5,7 +5,7 @@ import 'package:tudu/core/usecase/usecase.dart';
 import 'package:tudu/domain/usecases/authentication/current_user.dart';
 import 'package:tudu/domain/usecases/authentication/logout.dart';
 import 'package:tudu/domain/usecases/authentication/sign_in.dart';
-import 'package:tudu/presentation/bloc/cubit/auth_state.dart';
+import 'package:tudu/presentation/bloc/auth/auth_state.dart';
 import 'package:tudu/service_locator.dart';
 
 class AuthCubit extends Cubit<AuthState> {
