@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tudu/presentation/bloc/auth/auth_cubit.dart';
 import 'package:tudu/presentation/bloc/auth/auth_state.dart';
-import 'package:tudu/presentation/pages/home.dart';
+import 'package:tudu/presentation/bloc/bloc/todo_bloc.dart';
+import 'package:tudu/presentation/bloc/bloc/todo_event.dart';
 import 'package:tudu/presentation/widgets/splash/logo.dart';
 import 'package:tudu/presentation/widgets/splash/signin_button.dart';
-
+import 'home.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -23,6 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
         listener: (context, state) {
           if (state is Authenticated) {
             // Load todos
+            context.read<TodoBloc>().add(LoadTodos(userId: state.user.id));
 
             // Navigate to home
             Navigator.pushReplacement(
@@ -38,7 +40,7 @@ builder: (context, state) {
     children: [
        SizedBox(height: MediaQuery.of(context).size.height *0.1),
       const AnimatedLogoWidget(),
-      const GoogleSignInButton(),
+      const GoogleSignInButton()
     ],
   );
 }

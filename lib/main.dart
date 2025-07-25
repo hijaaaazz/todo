@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context)=>AuthCubit()..checkAuthStatus()),
-        BlocProvider(create: (context)=>TodoBloc())
+        BlocProvider(create: (context)=>TodoBloc()))
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
