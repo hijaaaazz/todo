@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tudu/firebase_options.dart';
 import 'package:tudu/presentation/bloc/auth/auth_cubit.dart';
+import 'package:tudu/presentation/bloc/bloc/todo_bloc.dart';
 import 'package:tudu/presentation/pages/splash.dart';
 import 'package:tudu/service_locator.dart';
 
@@ -25,7 +26,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context)=>AuthCubit()..checkAuthStatus())
+        BlocProvider(create: (context)=>AuthCubit()..checkAuthStatus()),
+        BlocProvider(create: (context)=>TodoBloc())
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
