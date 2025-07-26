@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tudu/data/models/add_todo_params.dart';
+import 'package:tudu/data/models/toggle_todo_params.dart';
 import 'package:tudu/domain/enities/todo_entity.dart';
 import 'package:tudu/domain/usecases/todo/add_todo.dart';
 import 'package:tudu/domain/usecases/todo/get_todo.dart';
+import 'package:tudu/domain/usecases/todo/toggle_todo.dart';
 import 'package:tudu/service_locator.dart';
 import 'todo_event.dart';
 import 'todo_state.dart';
@@ -90,6 +92,8 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
 
   void _onToggleTodo(ToggleTodo event, Emitter<TodoState> emit) {
     if (state is TodoLoaded) {
+
+      
       final currentState = state as TodoLoaded;
       final updatedTodos = currentState.todos.map((todo) {
         if (todo.id == event.id) {
@@ -97,6 +101,13 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
         }
         return todo;
       }).toList();
+
+      final result = sl<ToggleTodoUsecase>().call(
+        params: ToggleTodoParams(
+          todoId: event.id,
+          userId: event.userId,
+          status: event.status
+          ));
       emit(currentState.copyWith(todos: updatedTodos));
     }
   }

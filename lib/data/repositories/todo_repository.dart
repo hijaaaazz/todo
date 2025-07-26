@@ -50,8 +50,11 @@ throw UnimplementedError();  }
 throw UnimplementedError();  }
 
   @override
-  Future<Either<String, bool>> toggleTodo(ToggleTodoParams params) {
-    // TODO: implement toggleTodo
-    throw UnimplementedError();
+  Future<Either<String, bool>> toggleTodo(ToggleTodoParams params)async{
+    final result = await _service.toggleTodoCompletion(params);
+  return result.fold(
+    (l) => Left(l),
+    (r) => Right(r),
+  );
   }
 }

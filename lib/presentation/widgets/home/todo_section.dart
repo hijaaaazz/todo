@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tudu/domain/enities/todo_entity.dart';
+import 'package:tudu/presentation/bloc/auth/auth_cubit.dart';
+import 'package:tudu/presentation/bloc/auth/auth_state.dart';
 import 'package:tudu/presentation/bloc/bloc/todo_bloc.dart';
 import 'package:tudu/presentation/bloc/bloc/todo_event.dart';
 import 'package:tudu/presentation/bloc/bloc/todo_state.dart';
@@ -59,7 +61,19 @@ class TodoSection extends StatelessWidget {
                       const SizedBox(height: 20),
                       ...entry.value.map((todo) => TodoItem(
                             todo: todo,
-                            onToggle: () => context.read<TodoBloc>().add(ToggleTodo(todo.id)),
+                          onToggle: () {
+  final authState = context.read<AuthCubit>().state;
+  final userId = authState is Authenticated ? authState.user.id : "";
+
+  context.read<TodoBloc>().add(
+    ToggleTodo(
+      id: todo.id,
+      userId: userId,
+      status: !todo.isCompleted,
+    ),
+  );
+},
+
                             onEdit: () => onEdit(todo),
                             onDelete: () => onDelete(todo),
                           )),
@@ -80,8 +94,19 @@ class TodoSection extends StatelessWidget {
                 const SizedBox(height: 20),
                 ...todosToShow.map((todo) => TodoItem(
                       todo: todo,
-                      onToggle: () => context.read<TodoBloc>().add(ToggleTodo(todo.id)),
-                      onEdit: () => onEdit(todo),
+onToggle: () {
+  final authState = context.read<AuthCubit>().state;
+  final userId = authState is Authenticated ? authState.user.id : "";
+
+  context.read<TodoBloc>().add(
+    ToggleTodo(
+      id: todo.id,
+      userId: userId,
+      status: !todo.isCompleted,
+    ),
+  );
+},
+ onEdit: () => onEdit(todo),
                       onDelete: () => onDelete(todo),
                     )),
               ],

@@ -127,6 +127,8 @@ Future<Either<String, TodoModel>> updateTodoTextOrDate(UpdateTodoParams params) 
 @override
 Future<Either<String, bool>> toggleTodoCompletion(ToggleTodoParams params) async {
   try {
+
+    log("hijij");
     final todoRef = _firestore
         .collection('users')
         .doc(params.userId)

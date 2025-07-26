@@ -41,8 +41,10 @@ class UpdateTodo extends TodoEvent {
 
 class ToggleTodo extends TodoEvent {
   final String id;
+  final String userId;
+  final bool status;
 
-  const ToggleTodo(this.id);
+  const ToggleTodo({required this.id,required this.userId,required this.status});
 
   @override
   List<Object> get props => [id];
