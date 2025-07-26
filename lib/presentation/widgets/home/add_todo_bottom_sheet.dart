@@ -17,40 +17,21 @@ class _AddTodoBottomSheetState extends State<AddTodoBottomSheet>
     with SingleTickerProviderStateMixin {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final FocusNode _titleFocusNode = FocusNode();
   DateTime? _selectedDueDate;
   TimeOfDay? _selectedTime;
-  late AnimationController _animationController;
-  late Animation<double> _slideAnimation;
+  
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-    _slideAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutCubic,
-    ));
-
-    _animationController.forward();
+   
     
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _titleFocusNode.requestFocus();
-    });
   }
 
   @override
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
-    _titleFocusNode.dispose();
-    _animationController.dispose();
     super.dispose();
   }
 
@@ -136,12 +117,7 @@ context.read<TodoBloc>().add(AddTodoEvent(
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: AnimatedBuilder(
-        animation: _slideAnimation,
-        builder: (context, child) {
-          return Transform.translate(
-            offset: Offset(0, _slideAnimation.value * 100),
-            child: Container(
+      child: Container(
               padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom,
               ),
@@ -232,7 +208,6 @@ context.read<TodoBloc>().add(AddTodoEvent(
                       // Title Input
                       _buildInputField(
                         controller: _titleController,
-                        focusNode: _titleFocusNode,
                         label: 'Task Title',
                         hint: 'What needs to be done?',
                         icon: Icons.title_rounded,
@@ -388,15 +363,11 @@ context.read<TodoBloc>().add(AddTodoEvent(
                 ),
               ),
             ),
-          );
-        },
-      ),
     );
   }
 
   Widget _buildInputField({
     required TextEditingController controller,
-    FocusNode? focusNode,
     required String label,
     required String hint,
     required IconData icon,
@@ -425,7 +396,6 @@ context.read<TodoBloc>().add(AddTodoEvent(
           ),
           child: TextField(
             controller: controller,
-            focusNode: focusNode,
             maxLines: maxLines,
             style: const TextStyle(
               color: Colors.white,

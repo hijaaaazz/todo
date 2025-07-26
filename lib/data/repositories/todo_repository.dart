@@ -43,11 +43,13 @@ final result = await _service.updateTodoTextOrDate(params);
 
   @override
   Future<Either<String, bool>> deleteTodo(DeleteTodoParams params) async {
-throw UnimplementedError();  }
+final result = await _service.deleteTodo(params);
+  return result.fold(
+    (l) => Left(l),
+    (r) => Right(r),
+  );
+}
 
-  @override
-  Future<Either<String, List<TodoModel>>> getSearchResults(SearchParams params) async {
-throw UnimplementedError();  }
 
   @override
   Future<Either<String, bool>> toggleTodo(ToggleTodoParams params)async{

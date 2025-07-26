@@ -5,14 +5,12 @@ import 'package:tudu/presentation/pages/todo.dart';
 class TodoItem extends StatefulWidget {
   final TodoEntity todo;
   final VoidCallback onToggle;
-  final VoidCallback onEdit;
   final VoidCallback onDelete;
 
   const TodoItem({
     super.key,
     required this.todo,
     required this.onToggle,
-    required this.onEdit,
     required this.onDelete,
   });
 
@@ -206,10 +204,7 @@ class _TodoEntityWidgetState extends State<TodoItem>
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        _buildActionButton(
-                          icon: Icons.edit_outlined,
-                          onPressed: widget.onEdit,
-                        ),
+                       
                         const SizedBox(width: 8),
                         _buildActionButton(
                           icon: Icons.delete_outline_rounded,

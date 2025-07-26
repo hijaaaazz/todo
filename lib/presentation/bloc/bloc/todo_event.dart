@@ -52,8 +52,9 @@ class ToggleTodo extends TodoEvent {
 
 class DeleteTodo extends TodoEvent {
   final String id;
+  final String userId;
 
-  const DeleteTodo(this.id);
+  const DeleteTodo({required this.id,required this.userId});
 
   @override
   List<Object> get props => [id];

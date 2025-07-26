@@ -8,8 +8,10 @@ import 'package:tudu/domain/repositories/todo_repository.dart';
 import 'package:tudu/domain/usecases/authentication/current_user.dart';
 import 'package:tudu/domain/usecases/authentication/logout.dart';
 import 'package:tudu/domain/usecases/authentication/sign_in.dart';
+import 'package:tudu/domain/usecases/todo/delete_todo.dart';
 import 'package:tudu/domain/usecases/todo/get_todo.dart';
 import 'package:tudu/domain/usecases/todo/toggle_todo.dart';
+import 'package:tudu/presentation/bloc/bloc/todo_event.dart';
 
 final sl = GetIt.instance;
 
@@ -55,6 +57,10 @@ Future<void> initializeDependencies()async{
 
   sl.registerLazySingleton<ToggleTodoUsecase>(
     ()=> ToggleTodoUsecase()
+  );
+
+  sl.registerLazySingleton<DeleteTodoUsecase>(
+    ()=> DeleteTodoUsecase()
   );
 
 

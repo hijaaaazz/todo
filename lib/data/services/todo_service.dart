@@ -159,6 +159,7 @@ Future<Either<String, bool>> toggleTodoCompletion(ToggleTodoParams params) async
   @override
   Future<Either<String, bool>> deleteTodo(DeleteTodoParams params) async {
     try {
+      log("started deleteing");
       final todoRef = _firestore
           .collection('users')
           .doc(params.userId)

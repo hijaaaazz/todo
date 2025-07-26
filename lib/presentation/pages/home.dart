@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tudu/domain/enities/todo_entity.dart';
 import 'package:tudu/presentation/bloc/auth/auth_cubit.dart';
 import 'package:tudu/presentation/bloc/auth/auth_state.dart';
 import 'package:tudu/presentation/bloc/bloc/todo_bloc.dart';
@@ -7,6 +8,7 @@ import 'package:tudu/presentation/bloc/bloc/todo_event.dart';
 import 'package:tudu/presentation/bloc/bloc/todo_state.dart';
 import 'package:tudu/presentation/pages/splash.dart';
 import 'package:tudu/presentation/widgets/home/add_todo_bottom_sheet.dart';
+import 'package:tudu/presentation/widgets/home/delete_confirmation.dart';
 import 'package:tudu/presentation/widgets/home/header.dart';
 import 'package:tudu/presentation/widgets/home/todo_section.dart';
 class TodoPage extends StatefulWidget {
@@ -72,29 +74,17 @@ class _TodoPageState extends State<TodoPage> with TickerProviderStateMixin {
     );
   }
 
-  void _showEditBottomSheet(todo) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      builder: (context) => BlocProvider.value(
-        value: context.read<TodoBloc>(),
-        child:SizedBox.shrink()
-        //EditTodoBottomSheet(todo: todo),
-      ),
-    );
-  }
+  
 
-  void _showDeleteBottomSheet(todo) {
+  void _showDeleteBottomSheet(TodoEntity todo) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       elevation: 0,
       builder: (context) => BlocProvider.value(
         value: context.read<TodoBloc>(),
-        child:SizedBox.shrink()
-        //DeleteTodoBottomSheet(todo: todo),
+        child:
+        DeleteTodoBottomSheet(todo: todo,),
       ),
     );
   }
@@ -203,7 +193,6 @@ class _TodoPageState extends State<TodoPage> with TickerProviderStateMixin {
     
                       if (state is TodoLoaded) {
                         return TodoSection(
-                          onEdit: _showEditBottomSheet,
                           onDelete: _showDeleteBottomSheet,
                         );
                       }

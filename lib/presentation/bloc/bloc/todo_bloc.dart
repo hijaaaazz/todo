@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tudu/data/models/add_todo_params.dart';
+import 'package:tudu/data/models/delete_todo_params.dart';
 import 'package:tudu/data/models/toggle_todo_params.dart';
 import 'package:tudu/domain/enities/todo_entity.dart';
 import 'package:tudu/domain/usecases/todo/add_todo.dart';
+import 'package:tudu/domain/usecases/todo/delete_todo.dart';
 import 'package:tudu/domain/usecases/todo/get_todo.dart';
 import 'package:tudu/domain/usecases/todo/toggle_todo.dart';
 import 'package:tudu/service_locator.dart';
@@ -18,8 +20,6 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     on<ToggleTodo>(_onToggleTodo);
     on<DeleteTodo>(_onDeleteTodo);
     on<SearchTodos>(_onSearchTodos);
-    on<SearchByDate>(_onSearchByDate);
-    on<ClearDateFilter>(_onClearDateFilter);
     on<SelectTab>(_onSelectTab);
   }
 
@@ -113,6 +113,10 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
   }
 
   void _onDeleteTodo(DeleteTodo event, Emitter<TodoState> emit) {
+
+      final result = sl<DeleteTodoUsecase>().call(params: 
+      DeleteTodoParams(id: event.id, userId: event.userId)
+      );
     if (state is TodoLoaded) {
       final currentState = state as TodoLoaded;
       final updatedTodos = currentState.todos.where((todo) => todo.id != event.id).toList();
@@ -127,19 +131,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     }
   }
 
-  void _onSearchByDate(SearchByDate event, Emitter<TodoState> emit) {
-    if (state is TodoLoaded) {
-      final currentState = state as TodoLoaded;
-      emit(currentState.copyWith(searchDate: event.date));
-    }
-  }
-
-  void _onClearDateFilter(ClearDateFilter event, Emitter<TodoState> emit) {
-    if (state is TodoLoaded) {
-      final currentState = state as TodoLoaded;
-      emit(currentState.copyWith(clearSearchDate: true));
-    }
-  }
+  
 
   void _onSelectTab(SelectTab event, Emitter<TodoState> emit) {
     if (state is TodoLoaded) {
