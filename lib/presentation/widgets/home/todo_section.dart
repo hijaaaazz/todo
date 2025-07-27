@@ -4,7 +4,7 @@ import 'package:tudu/domain/enities/todo_entity.dart';
 import 'package:tudu/presentation/bloc/bloc/todo_bloc.dart';
 import 'package:tudu/presentation/bloc/bloc/todo_state.dart';
 import 'package:tudu/presentation/widgets/home/stats.dart';
-import 'package:tudu/presentation/widgets/home/todo_item.dart';
+import 'package:tudu/presentation/widgets/todo_item/todo_item.dart';
 
 class TodoSection extends StatelessWidget {
   const TodoSection({super.key});

@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tudu/presentation/bloc/bloc/todo_bloc.dart';
-import 'package:tudu/presentation/bloc/bloc/todo_event.dart';
 
 class SearchBarWithButton extends StatefulWidget {
   final TextEditingController controller;
