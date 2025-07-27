@@ -259,6 +259,7 @@ class TodoDetailedPage extends StatelessWidget {
                         log('TodoDetailedPage: onDateTimeChanged called with date=$date, time=$time');
                         context.read<EditTodoCubit>().updateDueDateAndTime(date, time);
                       },
+                      isCompleted: todo.isCompleted,
                     ),
                   ),
 

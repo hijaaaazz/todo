@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class DateTimePicker extends StatelessWidget {
+  final bool isCompleted;
   final String label;
   final String hintText;
   final DateTime? initialDate;
@@ -16,6 +17,7 @@ class DateTimePicker extends StatelessWidget {
     this.initialDate,
     this.initialTime,
     this.onDateTimeChanged,
+    this.isCompleted = false
   });
 
   Future<void> _selectDateTime(BuildContext context) async {
@@ -149,7 +151,12 @@ class DateTimePicker extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         GestureDetector(
-          onTap: () => _selectDateTime(context),
+          onTap: () {
+            if(isCompleted){
+              return;
+            }
+            _selectDateTime(context);
+          },
           child: Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
