@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tudu/data/models/add_todo_params.dart';
@@ -28,38 +30,38 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
   Future<void> _onLoadTodos(LoadTodos event, Emitter<TodoState> emit) async {
     final previousState = state;
     emit(TodoLoading());
-    
+
     try {
       final userDoc = FirebaseFirestore.instance.collection('users').doc(event.userId);
       final todoCollection = userDoc.collection('todos');
       final collectionSnapshot = await todoCollection.limit(1).get();
-      
+
       if (collectionSnapshot.docs.isEmpty) {
         await todoCollection.doc('initial').set({'initialized': true});
         await todoCollection.doc('initial').delete();
       }
 
       final result = await sl<GetTodosUsecase>().call(params: event.userId);
-      
+
       result.fold(
-        (failure) => emit(previousState is TodoLoaded 
-            ? previousState 
+        (failure) => emit(previousState is TodoLoaded
+            ? previousState
             : TodoError(failure.toString())),
         (todos) => emit(TodoLoaded.initial(todos)),
       );
     } catch (e) {
-      emit(previousState is TodoLoaded 
-          ? previousState 
+      emit(previousState is TodoLoaded
+          ? previousState
           : TodoError(e.toString()));
     }
   }
 
   Future<void> _onAddTodo(AddTodoEvent event, Emitter<TodoState> emit) async {
     if (state is! TodoLoaded) return;
-    
+
     final currentState = state as TodoLoaded;
     final id = DateTime.now().millisecondsSinceEpoch.toString();
-    
+
     final optimisticTodo = TodoEntity(
       id: id,
       text: event.text,
@@ -86,6 +88,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
 
     result.fold(
       (failure) {
+        log('AddTodo failed: $failure');
         // Revert to previous state on failure
         emit(currentState);
       },
@@ -104,9 +107,11 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
 
   Future<void> _onUpdateTodo(UpdateTodo event, Emitter<TodoState> emit) async {
     if (state is! TodoLoaded) return;
-    
+
     final currentState = state as TodoLoaded;
-    
+
+    log('UpdateTodo: id=${event.id}, text=${event.text}, dueDate=${event.dueDate}, userId=${event.userId}');
+
     // Optimistic update
     final optimisticTodos = currentState.allTodos.map((todo) {
       if (todo.id == event.id) {
@@ -118,7 +123,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       }
       return todo;
     }).toList();
-    
+
     emit(currentState.copyWith(allTodos: optimisticTodos));
 
     // Perform service call
@@ -134,10 +139,12 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
 
     result.fold(
       (failure) {
+        log('UpdateTodo failed: $failure');
         // Revert to previous state on failure
         emit(currentState);
       },
       (updatedTodo) {
+        log('UpdateTodo success: updatedTodo.dueDate=${updatedTodo.dueDate}');
         // Update with actual todo from service
         final updatedTodos = currentState.allTodos
             .map((todo) => todo.id == updatedTodo.id ? updatedTodo : todo)
@@ -149,9 +156,9 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
 
   Future<void> _onToggleTodo(ToggleTodo event, Emitter<TodoState> emit) async {
     if (state is! TodoLoaded) return;
-    
+
     final currentState = state as TodoLoaded;
-    
+
     // Optimistic update
     final optimisticTodos = currentState.allTodos.map((todo) {
       if (todo.id == event.id) {
@@ -159,7 +166,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       }
       return todo;
     }).toList();
-    
+
     emit(currentState.copyWith(allTodos: optimisticTodos));
 
     // Perform service call
@@ -173,6 +180,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
 
     result.fold(
       (failure) {
+        log('ToggleTodo failed: $failure');
         // Revert to previous state on failure
         emit(currentState);
       },
@@ -184,14 +192,14 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
 
   Future<void> _onDeleteTodo(DeleteTodo event, Emitter<TodoState> emit) async {
     if (state is! TodoLoaded) return;
-    
+
     final currentState = state as TodoLoaded;
-    
+
     // Optimistic update
     final optimisticTodos = currentState.allTodos
         .where((todo) => todo.id != event.id)
         .toList();
-    
+
     emit(currentState.copyWith(allTodos: optimisticTodos));
 
     // Perform service call
@@ -201,6 +209,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
 
     result.fold(
       (failure) {
+        log('DeleteTodo failed: $failure');
         // Revert to previous state on failure
         emit(currentState);
       },
@@ -212,14 +221,14 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
 
   void _onSearchTodos(SearchTodos event, Emitter<TodoState> emit) {
     if (state is! TodoLoaded) return;
-    
+
     final currentState = state as TodoLoaded;
     emit(currentState.copyWith(searchQuery: event.query));
   }
 
   void _onSelectTab(SelectTab event, Emitter<TodoState> emit) {
     if (state is! TodoLoaded) return;
-    
+
     final currentState = state as TodoLoaded;
     emit(currentState.copyWith(selectedTab: event.tab));
   }

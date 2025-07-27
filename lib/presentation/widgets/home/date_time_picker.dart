@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -8,8 +7,7 @@ class DateTimePicker extends StatelessWidget {
   final String hintText;
   final DateTime? initialDate;
   final TimeOfDay? initialTime;
-  final ValueChanged<DateTime?>? onDateChanged;
-  final ValueChanged<TimeOfDay?>? onTimeChanged;
+  final Function(DateTime?, TimeOfDay?)? onDateTimeChanged;
 
   const DateTimePicker({
     super.key,
@@ -17,17 +15,18 @@ class DateTimePicker extends StatelessWidget {
     this.hintText = 'Set due date',
     this.initialDate,
     this.initialTime,
-    this.onDateChanged,
-    this.onTimeChanged,
+    this.onDateTimeChanged,
   });
 
   Future<void> _selectDateTime(BuildContext context) async {
     final now = DateTime.now();
+    log('DateTimePicker: Opening date picker');
+
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: initialDate ?? now,
-      firstDate: DateTime(now.year - 1),
-      lastDate: DateTime(now.year + 1),
+      firstDate: now, // Start from today, no past dates allowed
+      lastDate: now.add(const Duration(days: 365 * 5)),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -44,89 +43,99 @@ class DateTimePicker extends StatelessWidget {
       },
     );
 
-    log('DateTimePicker: pickedDate=$pickedDate');
-    if (pickedDate != null) {
-      final TimeOfDay? pickedTime = await showTimePicker(
-        context: context,
-        initialTime: initialTime ?? const TimeOfDay(hour: 23, minute: 59),
-        builder: (context, child) {
-          return Theme(
-            data: Theme.of(context).copyWith(
-              colorScheme: const ColorScheme.dark(
-                primary: Color(0xFF1E6F9F),
-                surface: Color(0xFF1A1A1A),
-                onSurface: Colors.white,
-                onPrimary: Colors.white,
-              ),
-              dialogBackgroundColor: const Color(0xFF1A1A1A),
-            ),
-            child: child!,
-          );
-        },
-      );
-      log('DateTimePicker: pickedTime=$pickedTime');
-
-      onDateChanged?.call(pickedDate);
-      onTimeChanged?.call(pickedTime);
-    } else {
-      // If date picker is cancelled, clear both date and time
-      onDateChanged?.call(null);
-      onTimeChanged?.call(null);
+    if (pickedDate == null) {
+      log('DateTimePicker: Date picker cancelled');
+      return;
     }
+
+    log('DateTimePicker: Date selected: $pickedDate');
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: initialTime ?? const TimeOfDay(hour: 23, minute: 59),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.dark(
+              primary: Color(0xFF1E6F9F),
+              surface: Color(0xFF1A1A1A),
+              onSurface: Colors.white,
+              onPrimary: Colors.white,
+            ),
+            dialogBackgroundColor: const Color(0xFF1A1A1A),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (pickedTime == null) {
+      log('DateTimePicker: Time picker cancelled');
+      return;
+    }
+
+    final combinedDateTime = DateTime(
+      pickedDate.year,
+      pickedDate.month,
+      pickedDate.day,
+      pickedTime.hour,
+      pickedTime.minute,
+    );
+
+    // Check if selected time is in the past (for today's date)
+    if (combinedDateTime.isBefore(now)) {
+      log('DateTimePicker: Selected time is in the past → Ignored');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Cannot set time in the past')),
+        );
+      }
+      return;
+    }
+
+    onDateTimeChanged?.call(pickedDate, pickedTime);
   }
 
-  String _formatDateTime(DateTime? date, TimeOfDay? time) {
+  String _formatDateTime(DateTime? date, TimeOfDay? time, BuildContext context) {
     if (date == null) return hintText;
 
     final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final selectedDate = DateTime(date.year, date.month, date.day);
-    final difference = selectedDate.difference(today).inDays;
+    final selected = DateTime(date.year, date.month, date.day);
+    final difference = selected.difference(DateTime(now.year, now.month, now.day)).inDays;
 
-    String dateStr;
+    String label;
     if (difference < 0) {
-      dateStr = 'Overdue';
+      label = 'Overdue';
     } else if (difference == 0) {
-      dateStr = 'Today';
+      label = 'Today';
     } else if (difference == 1) {
-      dateStr = 'Tomorrow';
+      label = 'Tomorrow';
     } else {
-      dateStr = DateFormat('d MMM').format(date);
+      label = DateFormat('d MMM').format(date);
     }
 
     if (time != null) {
-      final hour = time.hour.toString().padLeft(2, '0');
-      final minute = time.minute.toString().padLeft(2, '0');
-      return '$dateStr at $hour:$minute';
+      final timeFormatted = time.format(context);
+      return '$label at $timeFormatted';
     }
 
-    return dateStr;
+    return label;
   }
 
   Color _getTextColor(DateTime? date) {
-    if (date == null) {
-      return Colors.white.withOpacity(0.5);
-    }
+    if (date == null) return Colors.white.withOpacity(0.5);
 
     final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final selectedDate = DateTime(date.year, date.month, date.day);
-    final difference = selectedDate.difference(today).inDays;
+    final selected = DateTime(date.year, date.month, date.day);
+    final diff = selected.difference(DateTime(now.year, now.month, now.day)).inDays;
 
-    if (difference < 0) {
-      return Colors.red.withOpacity(0.8); // Overdue
-    } else if (difference == 0) {
-      return Colors.orange.withOpacity(0.8); // Today
-    } else if (difference <= 3) {
-      return Colors.yellow.withOpacity(0.8); // Soon
-    } else {
-      return Colors.white; // Normal
-    }
+    if (diff < 0) return Colors.redAccent;
+    if (diff == 0) return Colors.orangeAccent;
+    if (diff <= 3) return Colors.amber;
+    return Colors.white;
   }
 
   @override
   Widget build(BuildContext context) {
-    log('DateTimePicker: initialDate=$initialDate, initialTime=$initialTime');
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -157,8 +166,6 @@ class DateTimePicker extends StatelessWidget {
                   height: 40,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
                       colors: [
                         const Color(0xFF1E6F9F),
                         const Color(0xFF1E6F9F).withOpacity(0.8),
@@ -166,16 +173,12 @@ class DateTimePicker extends StatelessWidget {
                     ),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(
-                    Icons.schedule_rounded,
-                    color: Colors.white,
-                    size: 20,
-                  ),
+                  child: const Icon(Icons.schedule_rounded, color: Colors.white, size: 20),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    _formatDateTime(initialDate, initialTime),
+                    _formatDateTime(initialDate, initialTime, context),
                     style: TextStyle(
                       color: _getTextColor(initialDate),
                       fontSize: 14,
@@ -185,21 +188,75 @@ class DateTimePicker extends StatelessWidget {
                 ),
                 if (initialDate != null)
                   GestureDetector(
-                    onTap: () {
-                      onDateChanged?.call(null);
-                      onTimeChanged?.call(null);
-                    },
-                    child: Icon(
-                      Icons.close_rounded,
-                      color: Colors.white.withOpacity(0.5),
-                      size: 20,
-                    ),
+                    onTap: () => onDateTimeChanged?.call(null, null),
+                    child: Icon(Icons.close_rounded, color: Colors.white.withOpacity(0.5), size: 20),
                   ),
               ],
             ),
           ),
         ),
       ],
+    );
+  }
+}
+
+// Example usage
+class DateTimePickerExample extends StatefulWidget {
+  const DateTimePickerExample({super.key});
+
+  @override
+  State<DateTimePickerExample> createState() => _DateTimePickerExampleState();
+}
+
+class _DateTimePickerExampleState extends State<DateTimePickerExample> {
+  DateTime? initialDate;
+  TimeOfDay? initialTime;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('DateTime Picker Example'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            DateTimePicker(
+              label: 'Task Due Date',
+              hintText: 'Select due date and time',
+              initialDate: initialDate,
+              initialTime: initialTime,
+              onDateTimeChanged: (date, time) {
+                setState(() {
+                  initialDate = date;
+                  initialTime = time;
+                });
+              },
+            ),
+            const SizedBox(height: 20),
+            if (initialDate != null)
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Selected:',
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
+                      const SizedBox(height: 8),
+                      Text('Date: ${DateFormat('yyyy-MM-dd').format(initialDate!)}'),
+                      if (initialTime != null)
+                        Text('Time: ${initialTime!.format(context)}'),
+                    ],
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
     );
   }
 }

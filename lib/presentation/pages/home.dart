@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tudu/domain/enities/todo_entity.dart';
 import 'package:tudu/presentation/bloc/auth/auth_cubit.dart';
 import 'package:tudu/presentation/bloc/auth/auth_state.dart';
 import 'package:tudu/presentation/bloc/bloc/todo_bloc.dart';
@@ -8,7 +7,6 @@ import 'package:tudu/presentation/bloc/bloc/todo_event.dart';
 import 'package:tudu/presentation/bloc/bloc/todo_state.dart';
 import 'package:tudu/presentation/pages/splash.dart';
 import 'package:tudu/presentation/widgets/home/add_todo_bottom_sheet.dart';
-import 'package:tudu/presentation/widgets/home/delete_confirmation.dart';
 import 'package:tudu/presentation/widgets/home/header.dart';
 import 'package:tudu/presentation/widgets/home/todo_section.dart';
 class TodoPage extends StatefulWidget {
@@ -20,40 +18,19 @@ class TodoPage extends StatefulWidget {
 
 class _TodoPageState extends State<TodoPage> with TickerProviderStateMixin {
   final TextEditingController _searchController = TextEditingController();
-  late AnimationController _fabAnimationController;
-  late Animation<double> _fabAnimation;
+  
 
   @override
   void initState() {
     super.initState();
     _searchController.addListener(_onSearchChanged);
     
-    _fabAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-    
-    _fabAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fabAnimationController,
-      curve: Curves.elasticOut,
-    ));
-
-    // Delay FAB animation
-    Future.delayed(const Duration(milliseconds: 800), () {
-      if (mounted) {
-        _fabAnimationController.forward();
-      }
-    });
   }
 
   @override
   void dispose() {
     _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
-    _fabAnimationController.dispose();
     super.dispose();
   }
 
@@ -76,18 +53,6 @@ class _TodoPageState extends State<TodoPage> with TickerProviderStateMixin {
 
   
 
-  void _showDeleteBottomSheet(TodoEntity todo) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      builder: (context) => BlocProvider.value(
-        value: context.read<TodoBloc>(),
-        child:
-        DeleteTodoBottomSheet(todo: todo,),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -203,44 +168,41 @@ class _TodoPageState extends State<TodoPage> with TickerProviderStateMixin {
               ],
             ),
           ),
-          floatingActionButton: ScaleTransition(
-            scale: _fabAnimation,
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    const Color(0xFF1E6F9F),
-                    const Color(0xFF1E6F9F).withOpacity(0.8),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF1E6F9F).withOpacity(0.4),
-                    blurRadius: 16,
-                    offset: const Offset(0, 8),
-                  ),
+          floatingActionButton: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  const Color(0xFF1E6F9F),
+                  const Color(0xFF1E6F9F).withOpacity(0.8),
                 ],
               ),
-              child: FloatingActionButton.extended(
-                onPressed: _showAddBottomSheet,
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                icon: const Icon(
-                  Icons.add_rounded,
-                  color: Colors.white,
-                  size: 24,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF1E6F9F).withOpacity(0.4),
+                  blurRadius: 16,
+                  offset: const Offset(0, 8),
                 ),
-                label: const Text(
-                  'Add Task',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.5,
-                  ),
+              ],
+            ),
+            child: FloatingActionButton.extended(
+              onPressed: _showAddBottomSheet,
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              icon: const Icon(
+                Icons.add_rounded,
+                color: Colors.white,
+                size: 24,
+              ),
+              label: const Text(
+                'Add Task',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.5,
                 ),
               ),
             ),

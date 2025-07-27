@@ -16,97 +16,121 @@ class TodoDetailedPage extends StatelessWidget {
 
   const TodoDetailedPage({super.key, required this.todo});
 
+  void _saveTodo(BuildContext context, EditTodoState state) {
+    final text = state.text.trim();
+    final date = state.dueDate;
+    if (text.isEmpty || date == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Task title and due date are required')),
+      );
+      return;
+    }
+
+    DateTime? finalDueDate;
+    if (state.dueDate != null && state.time != null) {
+      finalDueDate = DateTime(
+        state.dueDate!.year,
+        state.dueDate!.month,
+        state.dueDate!.day,
+        state.time!.hour,
+        state.time!.minute,
+      ).toLocal();
+      log('TodoDetailedPage: Saving finalDueDate=$finalDueDate');
+    }
+
+    final authState = context.read<AuthCubit>().state;
+    final userId = authState is Authenticated ? authState.user.id : null;
+    if (userId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('User not authenticated')),
+      );
+      return;
+    }
+
+    if (todo.id == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Todo ID is missing')),
+      );
+      return;
+    }
+
+    context.read<TodoBloc>().add(
+          UpdateTodo(
+            id: todo.id!,
+            userId: userId,
+            text: text,
+            description: state.description.trim().isEmpty
+                ? null
+                : state.description.trim(),
+            dueDate: finalDueDate,
+          ),
+        );
+
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
+    log('TodoDetailedPage: initial todo.dueDate=${todo.dueDate}');
     return BlocProvider(
       create: (context) => EditTodoCubit(todo),
-      child: Builder(
-        builder: (providerContext) => Scaffold(
-          backgroundColor: Colors.black,
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () => Navigator.pop(context),
-            ),
-            actions: [
-              Container(
-                margin: const EdgeInsets.only(right: 16),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      const Color(0xFF1E6F9F),
-                      const Color(0xFF1E6F9F).withOpacity(0.8),
+      child: BlocBuilder<EditTodoCubit, EditTodoState>(
+        buildWhen: (previous, current) =>
+            previous.isValid != current.isValid ||
+            previous.text != current.text ||
+            previous.description != current.description ||
+            previous.dueDate != current.dueDate ||
+            previous.time != current.time,
+        builder: (context, state) {
+          return Scaffold(
+            backgroundColor: Colors.black,
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () => Navigator.pop(context),
+              ),
+              actions: [
+                Container(
+                  margin: const EdgeInsets.only(right: 16),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: state.isValid
+                          ? [
+                              const Color(0xFF1E6F9F),
+                              const Color(0xFF1E6F9F).withOpacity(0.8),
+                            ]
+                          : [
+                              Colors.grey.withOpacity(0.3),
+                              Colors.grey.withOpacity(0.2),
+                            ],
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: state.isValid
+                            ? const Color(0xFF1E6F9F).withOpacity(0.3)
+                            : Colors.grey.withOpacity(0.1),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
                     ],
                   ),
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF1E6F9F).withOpacity(0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
+                  child: IconButton(
+                    icon: const Icon(Icons.check, color: Colors.white),
+                    onPressed: () => _saveTodo(context, state),
+                  ),
                 ),
-                child: IconButton(
-                  icon: const Icon(Icons.check, color: Colors.white),
-                  onPressed: () {
-                    try {
-                      final state = providerContext.read<EditTodoCubit>().state;
-                      if (state.text.isEmpty) {
-                        ScaffoldMessenger.of(providerContext).showSnackBar(
-                          const SnackBar(content: Text('Title cannot be empty')),
-                        );
-                        return;
-                      }
-
-                      final authState = providerContext.read<AuthCubit>().state;
-                      final userId = authState is Authenticated ? authState.user.id : "";
-                      log('Saving todo for userId: $userId');
-
-                      DateTime? finalDueDate;
-                      if (state.dueDate != null) {
-                        finalDueDate = DateTime(
-                          state.dueDate!.year,
-                          state.dueDate!.month,
-                          state.dueDate!.day,
-                          state.time?.hour ?? 23,
-                          state.time?.minute ?? 59,
-                        );
-                        log('Saving dueDate: $finalDueDate');
-                      }
-
-                      providerContext.read<TodoBloc>().add(
-                            UpdateTodo(
-                              id: todo.id!,
-                              userId: userId,
-                              text: state.text,
-                              description: state.description.isEmpty ? null : state.description,
-                              dueDate: finalDueDate,
-                            ),
-                          );
-
-                      Navigator.of(providerContext).pop();
-                    } catch (e) {
-                      log('Error saving todo: $e');
-                      ScaffoldMessenger.of(providerContext).showSnackBar(
-                        SnackBar(content: Text('Error saving todo: $e')),
-                      );
-                    }
-                  },
-                ),
-              ),
-            ],
-          ),
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Text Section
-                BlocBuilder<EditTodoCubit, EditTodoState>(
-                  builder: (context, state) => Container(
+              ],
+            ),
+            body: SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Text Section
+                  Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.08),
@@ -156,13 +180,11 @@ class TodoDetailedPage extends StatelessWidget {
                       ],
                     ),
                   ),
-                ),
 
-                const SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
-                // Description Section
-                BlocBuilder<EditTodoCubit, EditTodoState>(
-                  builder: (context, state) => Container(
+                  // Description Section
+                  Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.08),
@@ -215,13 +237,11 @@ class TodoDetailedPage extends StatelessWidget {
                       ],
                     ),
                   ),
-                ),
 
-                const SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
-                // Due Date Section
-                BlocBuilder<EditTodoCubit, EditTodoState>(
-                  builder: (context, state) => Container(
+                  // Due Date Section
+                  Container(
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.08),
                       borderRadius: BorderRadius.circular(20),
@@ -235,25 +255,16 @@ class TodoDetailedPage extends StatelessWidget {
                       hintText: 'Set due date',
                       initialDate: state.dueDate,
                       initialTime: state.time,
-                      onDateChanged: (date) => context
-                          .read<EditTodoCubit>()
-                          .updateDueDateAndTime(
-                              date,
-                              date != null
-                                  ? state.time ?? const TimeOfDay(hour: 23, minute: 59)
-                                  : null),
-                      onTimeChanged: (time) => context
-                          .read<EditTodoCubit>()
-                          .updateDueDateAndTime(state.dueDate, time),
+                      onDateTimeChanged: (date, time) {
+                        log('TodoDetailedPage: onDateTimeChanged called with date=$date, time=$time');
+                        context.read<EditTodoCubit>().updateDueDateAndTime(date, time);
+                      },
                     ),
                   ),
-                ),
 
-                // Detailed Date Display
-                BlocBuilder<EditTodoCubit, EditTodoState>(
-                  builder: (context, state) {
-                    if (state.dueDate == null) return const SizedBox();
-                    return Padding(
+                  // Detailed Date Display
+                  if (state.dueDate != null)
+                    Padding(
                       padding: const EdgeInsets.only(top: 8, left: 20),
                       child: Text(
                         DateFormat('EEEE, MMMM d, y').format(state.dueDate!),
@@ -263,16 +274,14 @@ class TodoDetailedPage extends StatelessWidget {
                           fontWeight: FontWeight.w400,
                         ),
                       ),
-                    );
-                  },
-                ),
+                    ),
 
-                const SizedBox(height: 40),
-              ],
+                  const SizedBox(height: 40),
+                ],
+              ),
             ),
-          ),
-        ),
-      ),
-    );
+          );
+  })
+      );
   }
 }

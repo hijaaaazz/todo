@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tudu/presentation/bloc/add_todo/add_todo.dart';
@@ -7,27 +9,39 @@ import 'package:tudu/presentation/bloc/bloc/todo_bloc.dart';
 import 'package:tudu/presentation/bloc/bloc/todo_event.dart';
 import 'date_time_picker.dart';
 
-
 class AddTodoBottomSheet extends StatelessWidget {
   const AddTodoBottomSheet({super.key});
 
   void _addTodo(BuildContext context, AddTodoFormState formState) {
     final title = formState.title.trim();
-    if (title.isEmpty) return;
+    final date = formState.dueDate;
+    if (title.isEmpty || date == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Task title and due date are required')),
+      );
+      return;
+    }
 
     DateTime? finalDueDate;
-    if (formState.dueDate != null) {
+    if (formState.dueDate != null && formState.time != null) {
       finalDueDate = DateTime(
         formState.dueDate!.year,
         formState.dueDate!.month,
         formState.dueDate!.day,
-        formState.time?.hour ?? 23,
-        formState.time?.minute ?? 59,
-      );
+        formState.time!.hour,
+        formState.time!.minute,
+      ).toLocal();
+      log('AddTodoBottomSheet: finalDueDate=$finalDueDate');
     }
 
     final authState = context.read<AuthCubit>().state;
     final userId = authState is Authenticated ? authState.user.id : null;
+    if (userId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('User not authenticated')),
+      );
+      return;
+    }
 
     context.read<TodoBloc>().add(AddTodoEvent(
           text: title,
@@ -101,8 +115,10 @@ class AddTodoBottomSheet extends StatelessWidget {
                   DateTimePicker(
                     initialDate: formState.dueDate,
                     initialTime: formState.time,
-                    onDateChanged: (date) => context.read<AddTodoFormCubit>().updateDueDate(date),
-                    onTimeChanged: (time) => context.read<AddTodoFormCubit>().updateTime(time),
+                    onDateTimeChanged: (date, time) {
+                      log('AddTodoBottomSheet: onDateTimeChanged date=$date, time=$time');
+                      context.read<AddTodoFormCubit>().updateDueDateAndTime(date, time);
+                    },
                   ),
                   const SizedBox(height: 20),
 

@@ -31,7 +31,9 @@ class AddTodoFormState {
     );
   }
 
-  bool get isValid => title.trim().isNotEmpty;
+  bool get isValid {
+    return title.trim().isNotEmpty && dueDate !=null;
+  } 
 }
 
 // Add Todo Form Cubit

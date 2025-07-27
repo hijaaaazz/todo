@@ -37,13 +37,8 @@ class TodoSection extends StatelessWidget {
                     _buildSectionHeader(
                       entry.key,
                       entry.value.length,
-                      entry.key == 'Today'
-                          ? Icons.today_rounded
-                          : entry.key == 'Tomorrow'
-                              ? Icons.event_rounded
-                              : entry.key == 'This Week'
-                                  ? Icons.calendar_today_rounded
-                                  : Icons.calendar_month_rounded,
+                      _getSectionIcon(entry.key),
+                      _getSectionColor(entry.key),
                     ),
                     const SizedBox(height: 20),
                     ...entry.value.map((todo) => TodoItem(todo: todo)),
@@ -60,7 +55,39 @@ class TodoSection extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionHeader(String title, int count, IconData icon) {
+  IconData _getSectionIcon(String sectionKey) {
+    switch (sectionKey) {
+      case 'Overdue':
+        return Icons.warning_rounded;
+      case 'Today':
+        return Icons.today_rounded;
+      case 'Tomorrow':
+        return Icons.event_rounded;
+      case 'This Week':
+        return Icons.calendar_today_rounded;
+      case 'Later':
+      default:
+        return Icons.calendar_month_rounded;
+    }
+  }
+
+  Color _getSectionColor(String sectionKey) {
+    switch (sectionKey) {
+      case 'Overdue':
+        return const Color(0xFFE74C3C); // Red for overdue
+      case 'Today':
+        return const Color(0xFF1E6F9F); // Blue for today
+      case 'Tomorrow':
+        return const Color(0xFF27AE60); // Green for tomorrow
+      case 'This Week':
+        return const Color(0xFFF39C12); // Orange for this week
+      case 'Later':
+      default:
+        return const Color(0xFF9B59B6); // Purple for later
+    }
+  }
+
+  Widget _buildSectionHeader(String title, int count, IconData icon, Color color) {
     return Row(
       children: [
         Container(
@@ -71,11 +98,19 @@ class TodoSection extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                const Color(0xFF1E6F9F),
-                const Color(0xFF1E6F9F).withOpacity(0.8),
+                color,
+                color.withOpacity(0.8),
               ],
             ),
             borderRadius: BorderRadius.circular(12),
+            // Add a subtle shadow for overdue items to make them stand out more
+            boxShadow: title == 'Overdue' ? [
+              BoxShadow(
+                color: color.withOpacity(0.3),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ] : null,
           ),
           child: Icon(
             icon,
@@ -88,14 +123,37 @@ class TodoSection extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: -0.3,
-                ),
+              Row(
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: -0.3,
+                    ),
+                  ),
+                  // Add an exclamation mark for overdue section
+                  if (title == 'Overdue' && count > 0) ...[
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFE74C3C),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Text(
+                        '!',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
               ),
               Text(
                 '$count ${count == 1 ? 'task' : 'tasks'}',

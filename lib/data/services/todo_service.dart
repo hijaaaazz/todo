@@ -93,41 +93,42 @@ class TodoFirebaseServiceImp implements TodoFirebaseService {
 @override
 Future<Either<String, TodoModel>> updateTodoTextOrDate(UpdateTodoParams params) async {
   try {
-  final userDocRef = _firestore.collection('users').doc(params.userId);
-  final todoRef = userDocRef.collection('todos').doc(params.id);
+      final userDocRef = _firestore.collection('users').doc(params.userId);
+      final todoRef = userDocRef.collection('todos').doc(params.id);
 
-  // 🔍 Log for debugging
-  final todoSnapshot = await todoRef.get();
-  final userSnapshot = await userDocRef.get();
+      // 🔍 Log for debugging
+      final todoSnapshot = await todoRef.get();
+      final userSnapshot = await userDocRef.get();
 
-  if (!userSnapshot.exists) {
-    log("❌ User document not found: users/${params.userId}");
-    return Left('User not found');
-  }
+      if (!userSnapshot.exists) {
+        log("❌ User document not found: users/${params.userId}");
+        return Left('User not found');
+      }
 
-  if (!todoSnapshot.exists) {
-    log("❌ Todo document not found: users/${params.userId}/todos/${params.id}");
-    return Left('Todo not found');
-  }
+      if (!todoSnapshot.exists) {
+        log("❌ Todo document not found: users/${params.userId}/todos/${params.id}");
+        return Left('Todo not found');
+      }
 
-  // ✅ Proceed with update
-  await todoRef.update({
-    'text': params.title,
-    'description': params.description,
-    'dueDate': params.duedate != null ? Timestamp.fromDate(params.duedate!) : null,
-  });
+      // ✅ Proceed with update
+      await todoRef.update({
+        'text': params.title,
+        'description': params.description,
+        'dueDate': params.duedate != null ? Timestamp.fromDate(params.duedate!) : null,
+        'updatedAt': Timestamp.now(),
+      });
 
-  // 🔄 Get updated todo
-  final updatedDoc = await todoRef.get();
-  final data = updatedDoc.data()!;
-  data['id'] = updatedDoc.id;
-  final updatedTodo = TodoModel.fromFirestore(data);
-  return Right(updatedTodo);
-
-} catch (e) {
-  log('🔥 updateTodoTextOrDate error: $e');
-  return Left('Failed to update todo: ${e.toString()}');
-}
+      // 🔄 Get updated todo
+      final updatedDoc = await todoRef.get();
+      final data = updatedDoc.data()!;
+      data['id'] = updatedDoc.id;
+      final updatedTodo = TodoModel.fromFirestore(data);
+      log('UpdateTodoUsecase: updatedTodo.dueDate=${updatedTodo.dueDate}');
+      return Right(updatedTodo);
+    } catch (e) {
+      log('🔥 updateTodoTextOrDate error: $e');
+      return Left('Failed to update todo: ${e.toString()}');
+    }
 
 }
 

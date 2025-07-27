@@ -167,25 +167,7 @@ class _TodoItemState extends State<TodoItem>{
             decorationThickness: 2,
           ),
         ),
-        if (widget.todo.description?.isNotEmpty == true) ...[
-          const SizedBox(height: 6),
-          Text(
-            widget.todo.description!,
-            style: TextStyle(
-              color: widget.todo.isCompleted
-                  ? Colors.white.withOpacity(0.3)
-                  : Colors.white.withOpacity(0.7),
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              decoration: widget.todo.isCompleted
-                  ? TextDecoration.lineThrough
-                  : null,
-              decorationColor: Colors.white.withOpacity(0.3),
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
+      
         if (widget.todo.dueDate != null) ...[
           const SizedBox(height: 8),
           Row(
@@ -273,21 +255,24 @@ class _TodoItemState extends State<TodoItem>{
   }
 
   String _formatDueDate(DateTime dueDate) {
-    final now = DateTime.now();
-    final difference = dueDate.difference(now).inDays;
-    
-    if (difference < 0) {
-      return 'Overdue';
-    } else if (difference == 0) {
-      return 'Due today';
-    } else if (difference == 1) {
-      return 'Due tomorrow';
-    } else if (difference <= 7) {
-      return 'Due in $difference days';
-    } else {
-      final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      return 'Due ${dueDate.day} ${months[dueDate.month - 1]}';
-    }
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+  final target = DateTime(dueDate.year, dueDate.month, dueDate.day);
+  final difference = target.difference(today).inDays;
+
+  if (difference < 0) {
+    return 'Overdue';
+  } else if (difference == 0) {
+    return 'Due today';
+  } else if (difference == 1) {
+    return 'Due tomorrow';
+  } else if (difference <= 7) {
+    return 'Due in $difference days';
+  } else {
+    final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return 'Due ${dueDate.day} ${months[dueDate.month - 1]}';
   }
+}
+
 }

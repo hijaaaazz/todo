@@ -22,6 +22,7 @@ class TodoLoaded extends TodoState {
   final int totalTasks;
   final int completedTasks;
   final int pendingTasks;
+  final int overdueTasks;
 
   const TodoLoaded({
     required this.allTodos,
@@ -31,6 +32,7 @@ class TodoLoaded extends TodoState {
     required this.totalTasks,
     required this.completedTasks,
     required this.pendingTasks,
+    required this.overdueTasks,
   });
 
   // Computed properties
@@ -49,55 +51,63 @@ class TodoLoaded extends TodoState {
 
   List<TodoEntity> _getFilteredTodosByTab() {
     switch (selectedTab) {
-      case 'Active':
+      case TabItem.active:
         return allTodos.where((todo) => !todo.isCompleted).toList();
-      case 'Completed':
+      case TabItem.completed:
         return allTodos.where((todo) => todo.isCompleted).toList();
-      case 'Total':
+      case TabItem.total:
       default:
         return allTodos;
     }
   }
 
-  // Group todos by due date for display
+  // Group todos by due date for display with Overdue section
   static Map<String, List<TodoEntity>> _groupTodosByDate(List<TodoEntity> todos) {
-    final Map<String, List<TodoEntity>> grouped = {
-      'Today': [],
-      'Tomorrow': [],
-      'This Week': [],
-      'Later': [],
-    };
+  final Map<String, List<TodoEntity>> grouped = {
+    'Overdue': [],
+    'Completed Overdue': [], // New section for completed overdue tasks
+    'Today': [],
+    'Tomorrow': [],
+    'This Week': [],
+    'Later': [],
+  };
 
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final tomorrow = today.add(const Duration(days: 1));
-    final endOfWeek = today.add(Duration(days: 7 - today.weekday));
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+  final tomorrow = today.add(const Duration(days: 1));
+  final endOfWeek = today.add(Duration(days: 7 - today.weekday));
 
-    for (final todo in todos) {
-      if (todo.dueDate == null) {
-        grouped['Later']!.add(todo);
-        continue;
-      }
-
-      final dueDate = DateTime(
-        todo.dueDate!.year,
-        todo.dueDate!.month,
-        todo.dueDate!.day,
-      );
-
-      if (dueDate == today) {
-        grouped['Today']!.add(todo);
-      } else if (dueDate == tomorrow) {
-        grouped['Tomorrow']!.add(todo);
-      } else if (dueDate.isAfter(tomorrow) && dueDate.isBefore(endOfWeek.add(const Duration(days: 1)))) {
-        grouped['This Week']!.add(todo);
-      } else {
-        grouped['Later']!.add(todo);
-      }
+  for (final todo in todos) {
+    if (todo.dueDate == null) {
+      grouped['Later']!.add(todo);
+      continue;
     }
 
-    return grouped;
+    final dueDate = DateTime(
+      todo.dueDate!.year,
+      todo.dueDate!.month,
+      todo.dueDate!.day,
+    );
+
+    if (dueDate.isBefore(today)) {
+      if (!todo.isCompleted) {
+        grouped['Overdue']!.add(todo);
+      } else {
+        grouped['Completed Overdue']!.add(todo); // Place completed overdue tasks here
+      }
+    } else if (dueDate == today) {
+      grouped['Today']!.add(todo);
+    } else if (dueDate == tomorrow) {
+      grouped['Tomorrow']!.add(todo);
+    } else if (dueDate.isAfter(tomorrow) && dueDate.isBefore(endOfWeek.add(const Duration(days: 1)))) {
+      grouped['This Week']!.add(todo);
+    } else {
+      grouped['Later']!.add(todo);
+    }
   }
+
+  return grouped;
+}
 
   TodoLoaded copyWith({
     List<TodoEntity>? allTodos,
@@ -118,6 +128,19 @@ class TodoLoaded extends TodoState {
       }).toList();
     }
 
+    // Calculate overdue count
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final overdueCount = newAllTodos.where((todo) {
+      if (todo.dueDate == null || todo.isCompleted) return false;
+      final dueDate = DateTime(
+        todo.dueDate!.year,
+        todo.dueDate!.month,
+        todo.dueDate!.day,
+      );
+      return dueDate.isBefore(today);
+    }).length;
+
     return TodoLoaded(
       allTodos: newAllTodos,
       selectedTab: newSelectedTab,
@@ -126,22 +149,48 @@ class TodoLoaded extends TodoState {
       totalTasks: newAllTodos.length,
       completedTasks: newAllTodos.where((todo) => todo.isCompleted).length,
       pendingTasks: newAllTodos.where((todo) => !todo.isCompleted).length,
+      overdueTasks: overdueCount,
     );
   }
 
-  static List<TodoEntity> _getFilteredTodosByTabStatic(List<TodoEntity> todos, TabItem tab) {
+static List<TodoEntity> _getFilteredTodosByTabStatic(List<TodoEntity> todos, TabItem tab) {
     switch (tab) {
       case TabItem.active:
         return todos.where((todo) => !todo.isCompleted).toList();
       case TabItem.completed:
         return todos.where((todo) => todo.isCompleted).toList();
+      case TabItem.overdue:
+        final now = DateTime.now();
+        final today = DateTime(now.year, now.month, now.day);
+        return todos.where((todo) {
+          if (todo.dueDate == null || todo.isCompleted) return false;
+          final dueDate = DateTime(
+            todo.dueDate!.year,
+            todo.dueDate!.month,
+            todo.dueDate!.day,
+          );
+          return dueDate.isBefore(today);
+        }).toList();
       case TabItem.total:
-      return todos;
+        return todos;
     }
   }
 
   // Factory constructor for initial load
   factory TodoLoaded.initial(List<TodoEntity> todos) {
+    // Calculate overdue count for initial load
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final overdueCount = todos.where((todo) {
+      if (todo.dueDate == null || todo.isCompleted) return false;
+      final dueDate = DateTime(
+        todo.dueDate!.year,
+        todo.dueDate!.month,
+        todo.dueDate!.day,
+      );
+      return dueDate.isBefore(today);
+    }).length;
+
     return TodoLoaded(
       allTodos: todos,
       selectedTab: TabItem.total,
@@ -150,6 +199,7 @@ class TodoLoaded extends TodoState {
       totalTasks: todos.length,
       completedTasks: todos.where((todo) => todo.isCompleted).length,
       pendingTasks: todos.where((todo) => !todo.isCompleted).length,
+      overdueTasks: overdueCount,
     );
   }
 }
