@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tudu/core/theme/app_theme.dart';
 import 'package:tudu/presentation/bloc/auth/auth_cubit.dart';
 import 'package:tudu/presentation/widgets/bottom_sheet/action_button.dart';
 
@@ -20,7 +21,7 @@ class LogoutConfirmationDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: const Color(0xFF1A1A1A),
+      backgroundColor: AppTheme.background,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
@@ -36,23 +37,23 @@ class LogoutConfirmationDialog extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Colors.red.withOpacity(0.2),
-                  Colors.red.withOpacity(0.1),
+                  AppTheme.red.withOpacity(0.2),
+                  AppTheme.red.withOpacity(0.1),
                 ],
               ),
               borderRadius: BorderRadius.circular(20),
             ),
-            child: const Icon(
+            child:  Icon(
               Icons.logout_rounded,
-              color: Colors.red,
+              color: AppTheme.red,
               size: 40,
             ),
           ),
           const SizedBox(height: 24),
-          const Text(
+           Text(
             'Logout',
             style: TextStyle(
-              color: Colors.white,
+              color: AppTheme.white,
               fontSize: 24,
               fontWeight: FontWeight.w700,
               letterSpacing: -0.3,
@@ -62,7 +63,7 @@ class LogoutConfirmationDialog extends StatelessWidget {
           Text(
             'Are you sure you want to log out? You will need to sign in again.',
             style: TextStyle(
-              color: Colors.white.withOpacity(0.7),
+              color: AppTheme.white.withOpacity(0.7),
               fontSize: 16,
               fontWeight: FontWeight.w400,
               height: 1.4,
@@ -73,7 +74,7 @@ class LogoutConfirmationDialog extends StatelessWidget {
           ActionButtons(
             cancelText: 'Cancel',
             actionText: 'Logout',
-            actionColor: Colors.red,
+            actionColor: AppTheme.red,
             onCancel: () => _cancel(context),
             onAction: () => _logout(context),
           ),

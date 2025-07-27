@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:tudu/core/theme/app_theme.dart';
 
 class SearchBarWithButton extends StatefulWidget {
   final TextEditingController controller;
@@ -29,20 +30,20 @@ class _SearchBarWithButtonState extends State<SearchBarWithButton> {
             Expanded(
               child: TextField(
                 controller: widget.controller,
-                style: const TextStyle(
-                  color: Colors.white,
+                style:  TextStyle(
+                  color: AppTheme.white,
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                 ),
-                cursorColor: const Color(0xFF1E6F9F),
+                cursorColor: AppTheme.highlight,
                 decoration: InputDecoration(
                   hintText: 'Search your tasks...',
                   hintStyle: TextStyle(
-                    color: Colors.white.withOpacity(0.5),
+                    color: AppTheme.white.withOpacity(0.5),
                   ),
                   prefixIcon: Icon(
                     Icons.search_rounded,
-                    color: Colors.white.withOpacity(0.6),
+                    color: AppTheme.white.withOpacity(0.6),
                     size: 20,
                   ),
                   enabledBorder: InputBorder.none,

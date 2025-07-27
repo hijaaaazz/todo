@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tudu/core/theme/app_theme.dart';
 
 class TodoActionButtons extends StatelessWidget {
   final VoidCallback onDelete;
@@ -32,7 +33,7 @@ class TodoActionButtons extends StatelessWidget {
       width: 36,
       height: 36,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: AppTheme.white.withOpacity(0.1),
         borderRadius: BorderRadius.circular(10),
       ),
       child: IconButton(
@@ -40,8 +41,8 @@ class TodoActionButtons extends StatelessWidget {
         icon: Icon(
           icon,
           color: isDestructive
-              ? Colors.red.withOpacity(0.8)
-              : Colors.white.withOpacity(0.7),
+              ? AppTheme.red.withOpacity(0.8)
+              : AppTheme.white.withOpacity(0.7),
           size: 18,
         ),
         padding: EdgeInsets.zero,

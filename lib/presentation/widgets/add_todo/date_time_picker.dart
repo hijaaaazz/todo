@@ -3,6 +3,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:tudu/core/theme/app_theme.dart';
 
 class DateTimePicker extends StatelessWidget {
   final bool isCompleted;
@@ -34,13 +35,13 @@ class DateTimePicker extends StatelessWidget {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.dark(
-              primary: Color(0xFF1E6F9F),
-              surface: Color(0xFF1A1A1A),
-              onSurface: Colors.white,
-              onPrimary: Colors.white,
+            colorScheme: ColorScheme.dark(
+              primary: AppTheme.highlight,
+              surface: AppTheme.background,
+              onSurface: AppTheme.white,
+              onPrimary: AppTheme.white,
             ),
-            dialogBackgroundColor: const Color(0xFF1A1A1A),
+            dialogBackgroundColor: AppTheme.background,
           ),
           child: child!,
         );
@@ -59,13 +60,13 @@ class DateTimePicker extends StatelessWidget {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.dark(
-              primary: Color(0xFF1E6F9F),
-              surface: Color(0xFF1A1A1A),
-              onSurface: Colors.white,
-              onPrimary: Colors.white,
+            colorScheme: ColorScheme.dark(
+              primary: AppTheme.highlight,
+              surface: AppTheme.background,
+              onSurface: AppTheme.white,
+              onPrimary: AppTheme.white,
             ),
-            dialogBackgroundColor: const Color(0xFF1A1A1A),
+            dialogBackgroundColor: AppTheme.background,
           ),
           child: child!,
         );
@@ -126,16 +127,16 @@ class DateTimePicker extends StatelessWidget {
   }
 
   Color _getTextColor(DateTime? date) {
-    if (date == null) return Colors.white.withOpacity(0.5);
+    if (date == null) return AppTheme.white.withOpacity(0.5);
 
     final now = DateTime.now();
     final selected = DateTime(date.year, date.month, date.day);
     final diff = selected.difference(DateTime(now.year, now.month, now.day)).inDays;
 
-    if (diff < 0) return Colors.redAccent;
-    if (diff == 0) return Colors.orangeAccent;
-    if (diff <= 3) return Colors.amber;
-    return Colors.white;
+    if (diff < 0) return AppTheme.redAccent;
+    if (diff == 0) return AppTheme.orangeAccent;
+    if (diff <= 3) return AppTheme.amber;
+    return AppTheme.white;
   }
 
   @override
@@ -146,7 +147,7 @@ class DateTimePicker extends StatelessWidget {
         Text(
           label,
           style: TextStyle(
-            color: Colors.white.withOpacity(0.8),
+            color: AppTheme.white.withOpacity(0.8),
             fontSize: 14,
             fontWeight: FontWeight.w600,
           ),
@@ -162,10 +163,10 @@ class DateTimePicker extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.08),
+              color: AppTheme.white.withOpacity(0.08),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: Colors.white.withOpacity(0.1),
+                color: AppTheme.white.withOpacity(0.1),
               ),
             ),
             child: Row(
@@ -176,13 +177,13 @@ class DateTimePicker extends StatelessWidget {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        const Color(0xFF1E6F9F),
-                        const Color(0xFF1E6F9F).withOpacity(0.8),
+                        AppTheme.highlight,
+                        AppTheme.highlight.withOpacity(0.8),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(Icons.schedule_rounded, color: Colors.white, size: 20),
+                  child:  Icon(Icons.schedule_rounded, color: AppTheme.white, size: 20),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
@@ -198,7 +199,7 @@ class DateTimePicker extends StatelessWidget {
                 if (initialDate != null)
                   GestureDetector(
                     onTap: () => onDateTimeChanged?.call(null, null),
-                    child: Icon(Icons.close_rounded, color: Colors.white.withOpacity(0.5), size: 20),
+                    child: Icon(Icons.close_rounded, color: AppTheme.white.withOpacity(0.5), size: 20),
                   ),
               ],
             ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:tudu/core/theme/app_theme.dart';
 
 class AnimatedLogoWidget extends StatefulWidget {
   const AnimatedLogoWidget({super.key});
@@ -107,7 +108,7 @@ class _AnimatedLogoWidgetState extends State<AnimatedLogoWidget>
                             style: GoogleFonts.inter(
                               fontSize: 50,
                               fontWeight: FontWeight.w800,
-                              color: Color(0xFF1E6F9F),
+                              color:AppTheme.highlight,
                               letterSpacing: -2,
                             ),
                           ),
@@ -116,7 +117,7 @@ class _AnimatedLogoWidgetState extends State<AnimatedLogoWidget>
                             style: GoogleFonts.inter(
                               fontSize: 50,
                               fontWeight: FontWeight.w800,
-                              color: Colors.white,
+                              color: AppTheme.white,
                               letterSpacing: -2,
                             ),
                           ),
@@ -145,7 +146,7 @@ class _AnimatedLogoWidgetState extends State<AnimatedLogoWidget>
                             style: GoogleFonts.inter(
                               fontSize: 50,
                               fontWeight: FontWeight.w800,
-                              color: Colors.white,
+                              color: AppTheme.white,
                               letterSpacing: -2,
                             ),
                           ),
@@ -171,7 +172,7 @@ class _AnimatedLogoWidgetState extends State<AnimatedLogoWidget>
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                       // ignore: deprecated_member_use
-                      color: Colors.white.withOpacity(0.05),
+                      color: AppTheme.white.withOpacity(0.05),
                     ),
                     child: Text(
                       'Manage your Tasks',
@@ -179,7 +180,7 @@ class _AnimatedLogoWidgetState extends State<AnimatedLogoWidget>
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                         // ignore: deprecated_member_use
-                        color: Colors.white.withOpacity(0.8),
+                        color: AppTheme.white.withOpacity(0.8),
                         letterSpacing: 0.5,
                       ),
                     ),

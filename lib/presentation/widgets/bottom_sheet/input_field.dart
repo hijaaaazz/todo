@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:tudu/core/theme/app_theme.dart';
 
 class InputField extends StatelessWidget {
   final String label;
@@ -28,7 +29,7 @@ class InputField extends StatelessWidget {
         Text(
           label,
           style: TextStyle(
-            color: Colors.white.withOpacity(0.8),
+            color: AppTheme.white.withOpacity(0.8),
             fontSize: 14,
             fontWeight: FontWeight.w600,
           ),
@@ -36,18 +37,18 @@ class InputField extends StatelessWidget {
         const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.08),
+            color: AppTheme.white.withOpacity(0.08),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white.withOpacity(0.1)),
+            border: Border.all(color: AppTheme.white.withOpacity(0.1)),
           ),
           child: TextFormField(
             initialValue: initialValue,
             maxLines: maxLines,
-            style: const TextStyle(color: Colors.white, fontSize: 14),
+            style: TextStyle(color: AppTheme.white, fontSize: 14),
             decoration: InputDecoration(
               hintText: hint,
               hintStyle: TextStyle(
-                color: Colors.white.withOpacity(0.5),
+                color: AppTheme.white.withOpacity(0.5),
                 fontSize: 14,
               ),
               border: InputBorder.none,
@@ -55,7 +56,7 @@ class InputField extends StatelessWidget {
                   const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               prefixIcon: Icon(
                 icon,
-                color: Colors.white.withOpacity(0.6),
+                color: AppTheme.white.withOpacity(0.6),
                 size: 20,
               ),
             ),

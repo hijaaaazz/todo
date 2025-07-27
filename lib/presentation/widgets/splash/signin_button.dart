@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:tudu/core/theme/app_theme.dart';
 import 'package:tudu/presentation/bloc/auth/auth_cubit.dart';
 import 'package:tudu/presentation/bloc/auth/auth_state.dart';
 
@@ -37,9 +38,9 @@ class GoogleSignInButton extends StatelessWidget {
                           begin: Alignment.centerLeft,
                           end: Alignment.centerRight,
                           colors: [
-                            Colors.transparent,
-                            Colors.white.withOpacity(0.2),
-                            Colors.transparent,
+                            AppTheme.transparent,
+                            AppTheme.white.withOpacity(0.2),
+                            AppTheme.transparent,
                           ],
                         ),
                       ),
@@ -65,23 +66,23 @@ class GoogleSignInButton extends StatelessWidget {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
-                                color: Colors.white.withOpacity(0.1),
+                                color: AppTheme.white.withOpacity(0.1),
                                 width: 1,
                               ),
                               gradient: LinearGradient(
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                                 colors: [
-                                  Colors.white.withOpacity(0.08),
-                                  Colors.white.withOpacity(0.04),
+                                  AppTheme.white.withOpacity(0.08),
+                                  AppTheme.white.withOpacity(0.04),
                                 ],
                               ),
                             ),
-                            child: const SizedBox(
+                            child:  SizedBox(
                               width: 20,
                               height: 20,
                               child: CircularProgressIndicator(
-                                color: Color(0xFF1E6F9F),
+                                color: AppTheme.highlight,
                                 strokeWidth: 2.5,
                                 strokeCap: StrokeCap.round,
                               ),
@@ -98,15 +99,15 @@ class GoogleSignInButton extends StatelessWidget {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(16),
                                 border: Border.all(
-                                  color: Colors.white.withOpacity(0.1),
+                                  color: AppTheme.white.withOpacity(0.1),
                                   width: 1,
                                 ),
                                 gradient: LinearGradient(
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                   colors: [
-                                    Colors.white.withOpacity(0.08),
-                                    Colors.white.withOpacity(0.04),
+                                    AppTheme.white.withOpacity(0.08),
+                                    AppTheme.white.withOpacity(0.04),
                                   ],
                                 ),
                               ),
@@ -123,9 +124,9 @@ class GoogleSignInButton extends StatelessWidget {
                                         height: 16,
                                         fit: BoxFit.contain,
                                         errorBuilder: (context, error, stackTrace) {
-                                          return const Icon(
+                                          return  Icon(
                                             Icons.account_circle,
-                                            color: Color(0xFF4285F4),
+                                            color: AppTheme.highlight,
                                             size: 12,
                                           );
                                         },
@@ -137,7 +138,7 @@ class GoogleSignInButton extends StatelessWidget {
                                       style: GoogleFonts.inter(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w600,
-                                        color: Colors.white,
+                                        color: AppTheme.white,
                                         letterSpacing: 0.2,
                                       ),
                                     ),
@@ -159,9 +160,9 @@ class GoogleSignInButton extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
-                      color: const Color(0xFFFF4757).withOpacity(isError ? 0.1 : 0.0),
+                      color: AppTheme.highlight.withOpacity(isError ? 0.1 : 0.0),
                       border: Border.all(
-                        color: const Color(0xFFFF4757).withOpacity(isError ? 0.3 : 0.0),
+                        color: AppTheme.highlight.withOpacity(isError ? 0.3 : 0.0),
                         width: 1,
                       ),
                     ),
@@ -171,9 +172,9 @@ class GoogleSignInButton extends StatelessWidget {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(
+                           Icon(
                             Icons.error_outline,
-                            color: Color(0xFFFF4757),
+                            color: AppTheme.red,
                             size: 18,
                           ),
                           const SizedBox(width: 8),
@@ -181,7 +182,7 @@ class GoogleSignInButton extends StatelessWidget {
                             child: Text(
                               errorMessage,
                               style: GoogleFonts.inter(
-                                color: const Color(0xFFFF4757),
+                                color: AppTheme.red,
                                 fontSize: 12.5,
                                 fontWeight: FontWeight.w500,
                               ),

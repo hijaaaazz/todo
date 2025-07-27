@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tudu/core/theme/app_theme.dart';
 import 'package:tudu/data/models/tab_item.dart';
 import 'package:tudu/presentation/bloc/bloc/todo_bloc.dart';
 import 'package:tudu/presentation/bloc/bloc/todo_event.dart';
@@ -56,33 +57,33 @@ class StatsOverview extends StatelessWidget {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    const Color(0xFF1E6F9F),
-                    const Color(0xFF1E6F9F).withOpacity(0.8),
+                    AppTheme.highlight,
+                    AppTheme.highlight.withOpacity(0.8),
                   ],
                 )
               : LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    const Color(0xFF1E6F9F).withOpacity(0.15),
-                    const Color(0xFF1E6F9F).withOpacity(0.05),
+                    AppTheme.highlight.withOpacity(0.15),
+                    AppTheme.highlight.withOpacity(0.05),
                   ],
                 ),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: const Color(0xFF1E6F9F).withOpacity(isSelected ? 1.0 : 0.2),
+            color: AppTheme.highlight.withOpacity(isSelected ? 1.0 : 0.2),
             width: 1,
           ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(tabItem.icon, color: Colors.white, size: 18),
+            Icon(tabItem.icon, color: AppTheme.white, size: 18),
             const SizedBox(width: 8),
             Text(
               "$value ${tabItem.label}",
-              style: const TextStyle(
-                color: Colors.white,
+              style:  TextStyle(
+                color: AppTheme.white,
                 fontSize: 12,
                 fontWeight: FontWeight.w800,
               ),

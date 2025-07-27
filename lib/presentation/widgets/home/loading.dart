@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:tudu/core/theme/app_theme.dart';
 
 class TodoLoadingWidget extends StatelessWidget {
   const TodoLoadingWidget({super.key});
@@ -15,12 +16,12 @@ class TodoLoadingWidget extends StatelessWidget {
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: const Color(0xFF1E6F9F).withOpacity(0.1),
+              color: AppTheme.highlight.withOpacity(0.1),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: const Center(
+            child:  Center(
               child: CircularProgressIndicator(
-                color: Color(0xFF1E6F9F),
+                color: AppTheme.highlight,
                 strokeWidth: 2.5,
               ),
             ),
@@ -29,7 +30,7 @@ class TodoLoadingWidget extends StatelessWidget {
           Text(
             'Loading your tasks...',
             style: TextStyle(
-              color: Colors.white.withOpacity(0.7),
+              color: AppTheme.white.withOpacity(0.7),
               fontSize: 16,
               fontWeight: FontWeight.w500,
             ),

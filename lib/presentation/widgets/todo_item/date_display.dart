@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tudu/core/theme/app_theme.dart';
 
 class DateDisplay extends StatelessWidget {
   final DateTime date;
@@ -12,7 +13,7 @@ class DateDisplay extends StatelessWidget {
 
   Color _getDueDateColor() {
     if (isCompleted) {
-      return Colors.white.withOpacity(0.4);
+      return AppTheme.white.withOpacity(0.4);
     }
 
     final now = DateTime.now();
@@ -20,13 +21,13 @@ class DateDisplay extends StatelessWidget {
     final difference = dueDate.difference(now).inDays;
 
     if (difference < 0) {
-      return Colors.red.withOpacity(0.8); // Overdue
+      return AppTheme.red.withOpacity(0.8); // Overdue
     } else if (difference == 0) {
-      return Colors.orange.withOpacity(0.8); // Due today
+      return AppTheme.orange.withOpacity(0.8); // Due today
     } else if (difference <= 3) {
-      return Colors.yellow.withOpacity(0.8); // Due soon
+      return AppTheme.yellow.withOpacity(0.8); // Due soon
     } else {
-      return Colors.white.withOpacity(0.6); // Normal
+      return AppTheme.white.withOpacity(0.6); // Normal
     }
   }
 

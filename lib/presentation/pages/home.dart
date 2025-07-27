@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tudu/core/theme/app_theme.dart';
 import 'package:tudu/presentation/bloc/auth/auth_cubit.dart';
 import 'package:tudu/presentation/bloc/auth/auth_state.dart';
 import 'package:tudu/presentation/bloc/bloc/todo_bloc.dart';
@@ -44,7 +45,7 @@ class _TodoPageState extends State<TodoPage> with TickerProviderStateMixin {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppTheme.background,
       elevation: 0,
       builder: (context) => BlocProvider.value(
         value: context.read<TodoBloc>(),
@@ -66,7 +67,7 @@ class _TodoPageState extends State<TodoPage> with TickerProviderStateMixin {
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFF1A1A1A),
+        backgroundColor: AppTheme.background,
         body: SafeArea(
           child: Column(
             children: [

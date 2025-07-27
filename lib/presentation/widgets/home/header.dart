@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tudu/core/theme/app_theme.dart';
 import 'package:tudu/presentation/bloc/auth/auth_cubit.dart';
 import 'package:tudu/presentation/bloc/auth/auth_state.dart';
 import 'package:tudu/presentation/widgets/home/logout_confirmation.dart';
@@ -38,18 +39,18 @@ children: [
     style: TextStyle(
       fontSize: 16,
       fontWeight: FontWeight.w500,
-      color: Colors.white.withOpacity(0.7),
+      color: AppTheme.white.withOpacity(0.7),
       letterSpacing: 0.3,
     ),
   ),
 
                         const SizedBox(height: 4),
-                        const Text(
+                         Text(
                           'Your Tasks',
                           style: TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.w800,
-                            color: Colors.white,
+                            color: AppTheme.white,
                             letterSpacing: -0.8,
                           ),
                         ),
@@ -59,7 +60,7 @@ children: [
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
-                            color: Colors.white.withOpacity(0.6),
+                            color: AppTheme.white.withOpacity(0.6),
                             letterSpacing: 0.2,
                           ),
                         ),
@@ -80,22 +81,22 @@ children: [
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                           colors: [
-                            const Color(0xFF1E6F9F),
-                            const Color(0xFF1E6F9F).withOpacity(0.8),
+                            AppTheme.highlight,
+                            AppTheme.highlight.withOpacity(0.8),
                           ],
                         ),
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF1E6F9F).withOpacity(0.3),
+                            color: AppTheme.highlight.withOpacity(0.3),
                             blurRadius: 12,
                             offset: const Offset(0, 4),
                           ),
                         ],
                       ),
-                      child: const Icon(
+                      child:  Icon(
                         Icons.logout,
-                        color: Colors.white,
+                        color: AppTheme.white,
                         size: 24,
                       ),
                     ),

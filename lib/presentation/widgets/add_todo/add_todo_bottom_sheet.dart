@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tudu/core/theme/app_theme.dart';
 import 'package:tudu/presentation/bloc/add_todo/add_todo.dart';
 import 'package:tudu/presentation/bloc/bloc/todo_bloc.dart';
 import 'package:tudu/presentation/bloc/bloc/todo_event.dart';
@@ -95,7 +96,7 @@ class AddTodoBottomSheet extends StatelessWidget {
                 const SizedBox(height: 20),
                 ActionButtons(
                   actionText: 'Create',
-                  actionColor: const Color(0xFF1E6F9F),
+                  actionColor: AppTheme.highlight,
                   isActionEnabled: formState.isValid,
                   onAction: () => _addTodo(context, formState),
                 ),

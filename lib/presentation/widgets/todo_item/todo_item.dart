@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tudu/core/theme/app_theme.dart';
 import 'package:tudu/domain/enities/todo_entity.dart';
 import 'package:tudu/presentation/bloc/auth/auth_cubit.dart';
 import 'package:tudu/presentation/bloc/auth/auth_state.dart';
@@ -41,7 +42,7 @@ class _TodoItemState extends State<TodoItem> {
   void _handleDeleteTodo() {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppTheme.transparent,
       elevation: 0,
       builder: (context) => BlocProvider.value(
         value: context.read<TodoBloc>(),

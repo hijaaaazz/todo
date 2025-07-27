@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:tudu/core/theme/app_theme.dart';
 
 class FloatingActionButtonWidget extends StatelessWidget {
   final VoidCallback onPressed;
@@ -15,14 +16,14 @@ class FloatingActionButtonWidget extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            const Color(0xFF1E6F9F),
-            const Color(0xFF1E6F9F).withOpacity(0.8),
+            AppTheme.highlight,
+            AppTheme.highlight.withOpacity(0.8),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF1E6F9F).withOpacity(0.4),
+            color: AppTheme.highlight.withOpacity(0.4),
             blurRadius: 16,
             offset: const Offset(0, 8),
           ),
@@ -30,17 +31,17 @@ class FloatingActionButtonWidget extends StatelessWidget {
       ),
       child: FloatingActionButton.extended(
         onPressed: onPressed,
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppTheme.transparent,
         elevation: 0,
-        icon: const Icon(
+        icon:  Icon(
           Icons.add_rounded,
-          color: Colors.white,
+          color: AppTheme.white,
           size: 24,
         ),
-        label: const Text(
+        label:  Text(
           'Add Task',
           style: TextStyle(
-            color: Colors.white,
+            color: AppTheme.white,
             fontSize: 16,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.5,

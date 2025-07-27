@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tudu/core/theme/app_theme.dart';
 import 'package:tudu/firebase_options.dart';
 import 'package:tudu/presentation/bloc/auth/auth_cubit.dart';
 import 'package:tudu/presentation/bloc/bloc/todo_bloc.dart';
@@ -14,7 +17,7 @@ void main() async{
 
   );
   await initializeDependencies();
- 
+  log(ThemeMode.system.toString());
   runApp(const MyApp());
 }
 
@@ -24,6 +27,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context)=>AuthCubit()..checkAuthStatus()),
@@ -31,13 +35,12 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-          title: 'TuDu',
-          theme: ThemeData(
-    
-            colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 58, 81, 183)),
-            useMaterial3: true,
-          ),
-          home: const SplashScreen(),
+        title: 'TuDu',
+        theme: AppTheme.lightTheme,
+        themeMode: ThemeMode.light,
+        darkTheme: AppTheme.darkTheme,
+        
+        home: const SplashScreen(),
         ),
     );
   }

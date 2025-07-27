@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tudu/core/theme/app_theme.dart';
 import 'package:tudu/presentation/bloc/bloc/todo_bloc.dart';
 import 'package:tudu/presentation/bloc/bloc/todo_state.dart';
 import 'package:tudu/presentation/widgets/home/stats.dart';
@@ -75,16 +76,16 @@ class TodoSection extends StatelessWidget {
   Color _getSectionColor(String sectionKey) {
     switch (sectionKey) {
       case 'Overdue':
-        return const Color(0xFFE74C3C); // Red for overdue
+        return AppTheme.todoColors.overdue; // Red for overdue
       case 'Today':
-        return const Color(0xFF1E6F9F); // Blue for today
+        return AppTheme.todoColors.dueToday; // Blue for today
       case 'Tomorrow':
-        return const Color(0xFF27AE60); // Green for tomorrow
+        return AppTheme.todoColors.dueSoon; // Green for tomorrow
       case 'This Week':
-        return const Color(0xFFF39C12); // Orange for this week
+        return AppTheme.todoColors.mediumPriority; // Orange for this week
       case 'Later':
       default:
-        return const Color(0xFF9B59B6); // Purple for later
+        return AppTheme.todoColors.lowPriority; // Purple for later
     }
   }
 
@@ -115,7 +116,7 @@ class TodoSection extends StatelessWidget {
           ),
           child: Icon(
             icon,
-            color: Colors.white,
+            color: AppTheme.white,
             size: 20,
           ),
         ),
@@ -128,8 +129,8 @@ class TodoSection extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style:  TextStyle(
+                      color: AppTheme.white,
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
                       letterSpacing: -0.3,
@@ -141,13 +142,13 @@ class TodoSection extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFE74C3C),
+                        color: AppTheme.red,
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Text(
+                      child:  Text(
                         '!',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: AppTheme.white,
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                         ),
@@ -159,7 +160,7 @@ class TodoSection extends StatelessWidget {
               Text(
                 '$count ${count == 1 ? 'task' : 'tasks'}',
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.6),
+                  color: AppTheme.white.withOpacity(0.6),
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
@@ -176,10 +177,10 @@ class TodoSection extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 60),
       padding: const EdgeInsets.all(40),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: AppTheme.white.withOpacity(0.05),
         borderRadius: BorderRadius.circular(28),
         border: Border.all(
-          color: Colors.white.withOpacity(0.1),
+          color: AppTheme.white.withOpacity(0.1),
           width: 1,
         ),
       ),
@@ -194,8 +195,8 @@ class TodoSection extends StatelessWidget {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    const Color(0xFF1E6F9F).withOpacity(0.2),
-                    const Color(0xFF1E6F9F).withOpacity(0.1),
+                    AppTheme.highlight.withOpacity(0.2),
+                    AppTheme.highlight.withOpacity(0.1),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(20),
@@ -203,14 +204,14 @@ class TodoSection extends StatelessWidget {
               child: Icon(
                 Icons.task_alt_rounded,
                 size: 40,
-                color: Colors.white.withOpacity(0.6),
+                color: AppTheme.white.withOpacity(0.6),
               ),
             ),
             const SizedBox(height: 24),
-            const Text(
+             Text(
               'No tasks yet',
               style: TextStyle(
-                color: Colors.white,
+                color: AppTheme.white,
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
               ),
@@ -219,7 +220,7 @@ class TodoSection extends StatelessWidget {
             Text(
               'Create your first task to get started\nwith organizing your day',
               style: TextStyle(
-                color: Colors.white.withOpacity(0.6),
+                color: AppTheme.white.withOpacity(0.6),
                 fontSize: 16,
                 fontWeight: FontWeight.w400,
                 height: 1.4,

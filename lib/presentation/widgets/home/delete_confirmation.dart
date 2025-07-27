@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tudu/core/theme/app_theme.dart';
 import 'package:tudu/domain/enities/todo_entity.dart';
 import 'package:tudu/presentation/bloc/bloc/todo_bloc.dart';
 import 'package:tudu/presentation/bloc/bloc/todo_event.dart';
@@ -33,7 +34,7 @@ class DeleteTodoBottomSheet extends StatelessWidget {
           const DeleteConfirmationSection(),
           ActionButtons(
             actionText: 'Delete Task',
-            actionColor: Colors.red,
+            actionColor: AppTheme.red,
             onAction: () => _deleteTodo(context),
           ),
           const SizedBox(height: 20),

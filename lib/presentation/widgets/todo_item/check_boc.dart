@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tudu/core/theme/app_theme.dart';
 
 class TodoCheckbox extends StatelessWidget {
   final bool isCompleted;
@@ -20,11 +21,11 @@ class TodoCheckbox extends StatelessWidget {
         height: 28,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: isCompleted ? const Color(0xFF1E6F9F) : Colors.transparent,
+          color: isCompleted ? const Color(0xFF1E6F9F) : AppTheme.transparent,
           border: Border.all(
             color: isCompleted
                 ? const Color(0xFF1E6F9F)
-                : Colors.white.withOpacity(0.4),
+                : AppTheme.white.withOpacity(0.4),
             width: 2,
           ),
           boxShadow: isCompleted
@@ -38,9 +39,9 @@ class TodoCheckbox extends StatelessWidget {
               : null,
         ),
         child: isCompleted
-            ? const Icon(
+            ?  Icon(
                 Icons.check_rounded,
-                color: Colors.white,
+                color: AppTheme.white,
                 size: 18,
               )
             : null,

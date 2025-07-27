@@ -1,11 +1,12 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:tudu/core/theme/app_theme.dart';
 
 class ActionButtons extends StatelessWidget {
   final String cancelText;
   final String actionText;
-  final Color actionColor;
+  final Color? actionColor;
   final VoidCallback? onCancel;
   final VoidCallback? onAction;
   final bool isActionEnabled;
@@ -14,7 +15,7 @@ class ActionButtons extends StatelessWidget {
     super.key,
     this.cancelText = 'Cancel',
     this.actionText = 'Action',
-    this.actionColor = const Color(0xFF1E6F9F),
+    this.actionColor,
     this.onCancel,
     this.onAction,
     this.isActionEnabled = true,
@@ -22,6 +23,8 @@ class ActionButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Color effectiveActionColor = actionColor ?? AppTheme.highlight;
+
     return Row(
       children: [
         Expanded(
@@ -36,7 +39,7 @@ class ActionButtons extends StatelessWidget {
             child: Text(
               cancelText,
               style: TextStyle(
-                color: Colors.white.withOpacity(0.7),
+                color: AppTheme.white.withOpacity(0.7),
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
               ),
@@ -51,18 +54,18 @@ class ActionButtons extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  isActionEnabled ? actionColor : Colors.grey.withOpacity(0.3),
+                  isActionEnabled ? effectiveActionColor : AppTheme.grey.withOpacity(0.3),
                   isActionEnabled
-                      ? actionColor.withOpacity(0.8)
-                      : Colors.grey.withOpacity(0.2),
+                      ? effectiveActionColor.withOpacity(0.8)
+                      : AppTheme.grey.withOpacity(0.2),
                 ],
               ),
               borderRadius: BorderRadius.circular(10),
               boxShadow: [
                 BoxShadow(
                   color: isActionEnabled
-                      ? actionColor.withOpacity(0.3)
-                      : Colors.grey.withOpacity(0.1),
+                      ? effectiveActionColor.withOpacity(0.3)
+                      : AppTheme.grey.withOpacity(0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
@@ -71,8 +74,8 @@ class ActionButtons extends StatelessWidget {
             child: ElevatedButton(
               onPressed: isActionEnabled ? onAction : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.transparent,
-                shadowColor: Colors.transparent,
+                backgroundColor: AppTheme.transparent,
+                shadowColor: AppTheme.transparent,
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -80,8 +83,8 @@ class ActionButtons extends StatelessWidget {
               ),
               child: Text(
                 actionText,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: AppTheme.white,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),

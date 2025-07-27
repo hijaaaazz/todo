@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tudu/core/theme/app_theme.dart';
 import 'package:tudu/domain/enities/todo_entity.dart';
 import 'package:tudu/presentation/bloc/auth/auth_cubit.dart';
 import 'package:tudu/presentation/bloc/auth/auth_state.dart';
@@ -71,12 +72,12 @@ class TodoDetailedPage extends StatelessWidget {
             previous.time != current.time,
         builder: (context, state) {
           return Scaffold(
-            backgroundColor:const Color(0xFF1A1A1A),
+            backgroundColor:AppTheme.background,
             appBar: AppBar(
-              backgroundColor: Colors.transparent,
+              backgroundColor: AppTheme.transparent,
               elevation: 0,
               leading: IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                icon: Icon(Icons.arrow_back, color: AppTheme.white),
                 onPressed: () => Navigator.pop(context),
               ),
               actions: [

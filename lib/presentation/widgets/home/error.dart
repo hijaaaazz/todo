@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:tudu/core/theme/app_theme.dart';
 
 class TodoErrorWidget extends StatelessWidget {
   final String message;
@@ -14,10 +15,10 @@ class TodoErrorWidget extends StatelessWidget {
         margin: const EdgeInsets.all(24),
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: Colors.red.withOpacity(0.1),
+          color: AppTheme.red.withOpacity(0.1),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: Colors.red.withOpacity(0.3),
+            color: AppTheme.red.withOpacity(0.3),
             width: 1,
           ),
         ),
@@ -26,14 +27,14 @@ class TodoErrorWidget extends StatelessWidget {
           children: [
             Icon(
               Icons.error_outline_rounded,
-              color: Colors.red.shade400,
+              color: AppTheme.red.withOpacity(0.4),
               size: 48,
             ),
             const SizedBox(height: 16),
             Text(
               'Something went wrong',
               style: TextStyle(
-                color: Colors.red.shade400,
+                color: AppTheme.red.withOpacity(0.4),
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
               ),
@@ -42,7 +43,7 @@ class TodoErrorWidget extends StatelessWidget {
             Text(
               message,
               style: TextStyle(
-                color: Colors.white.withOpacity(0.7),
+                color: AppTheme.white.withOpacity(0.7),
                 fontSize: 14,
               ),
               textAlign: TextAlign.center,
