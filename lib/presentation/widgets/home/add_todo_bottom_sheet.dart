@@ -1,377 +1,176 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tudu/presentation/bloc/add_todo/add_todo.dart';
 import 'package:tudu/presentation/bloc/auth/auth_cubit.dart';
 import 'package:tudu/presentation/bloc/auth/auth_state.dart';
 import 'package:tudu/presentation/bloc/bloc/todo_bloc.dart';
 import 'package:tudu/presentation/bloc/bloc/todo_event.dart';
+import 'date_time_picker.dart';
 
-class AddTodoBottomSheet extends StatefulWidget {
+
+class AddTodoBottomSheet extends StatelessWidget {
   const AddTodoBottomSheet({super.key});
 
-  @override
-  State<AddTodoBottomSheet> createState() => _AddTodoBottomSheetState();
-}
+  void _addTodo(BuildContext context, AddTodoFormState formState) {
+    final title = formState.title.trim();
+    if (title.isEmpty) return;
 
-class _AddTodoBottomSheetState extends State<AddTodoBottomSheet>
-    with SingleTickerProviderStateMixin {
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-  DateTime? _selectedDueDate;
-  TimeOfDay? _selectedTime;
-  
-
-  @override
-  void initState() {
-    super.initState();
-   
-    
-  }
-
-  @override
-  void dispose() {
-    _titleController.dispose();
-    _descriptionController.dispose();
-    super.dispose();
-  }
-
-  void _addTodo() {
-    final title = _titleController.text.trim();
-    if (title.isNotEmpty) {
-      DateTime? finalDueDate;
-      if (_selectedDueDate != null) {
-        finalDueDate = DateTime(
-          _selectedDueDate!.year,
-          _selectedDueDate!.month,
-          _selectedDueDate!.day,
-          _selectedTime?.hour ?? 23,
-          _selectedTime?.minute ?? 59,
-        );
-      }
-        final authState = context.read<AuthCubit>().state;
-
-final userId = authState is Authenticated ? authState.user.id : null;
-
-context.read<TodoBloc>().add(AddTodoEvent(
-  text: title,
-  description: _descriptionController.text.trim().isEmpty
-      ? null
-      : _descriptionController.text.trim(),
-  dueDate: finalDueDate,
-  userId: userId,
-));
-
-      Navigator.pop(context);
-    }
-  }
-
-  Future<void> _selectDueDate() async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: _selectedDueDate ?? DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.dark(
-              primary: const Color(0xFF1E6F9F),
-              surface: const Color(0xFF1A1A1A),
-              onSurface: Colors.white,
-              onPrimary: Colors.white,
-            ),
-            dialogBackgroundColor: const Color(0xFF1A1A1A),
-          ),
-          child: child!,
-        );
-      },
-    );
-
-    if (pickedDate != null) {
-      final TimeOfDay? pickedTime = await showTimePicker(
-        context: context,
-        initialTime: _selectedTime ?? const TimeOfDay(hour: 23, minute: 59),
-        builder: (context, child) {
-          return Theme(
-            data: Theme.of(context).copyWith(
-              colorScheme: ColorScheme.dark(
-                primary: const Color(0xFF1E6F9F),
-                surface: const Color(0xFF1A1A1A),
-                onSurface: Colors.white,
-                onPrimary: Colors.white,
-              ),
-              dialogBackgroundColor: const Color(0xFF1A1A1A),
-            ),
-            child: child!,
-          );
-        },
+    DateTime? finalDueDate;
+    if (formState.dueDate != null) {
+      finalDueDate = DateTime(
+        formState.dueDate!.year,
+        formState.dueDate!.month,
+        formState.dueDate!.day,
+        formState.time?.hour ?? 23,
+        formState.time?.minute ?? 59,
       );
-
-      setState(() {
-        _selectedDueDate = pickedDate;
-        _selectedTime = pickedTime;
-      });
     }
+
+    final authState = context.read<AuthCubit>().state;
+    final userId = authState is Authenticated ? authState.user.id : null;
+
+    context.read<TodoBloc>().add(AddTodoEvent(
+          text: title,
+          description: formState.description.trim().isEmpty
+              ? null
+              : formState.description.trim(),
+          dueDate: finalDueDate,
+          userId: userId,
+        ));
+
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Container(
+    return BlocProvider(
+      create: (context) => AddTodoFormCubit(),
+      child: BlocBuilder<AddTodoFormCubit, AddTodoFormState>(
+        builder: (context, formState) {
+          return SingleChildScrollView(
+            child: Container(
               padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom,
+                left: 20,
+                right: 20,
+                top: 20,
               ),
-              child: Container(
-                decoration: const BoxDecoration(
-                  color: Color(0xFF1A1A1A),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(28),
-                    topRight: Radius.circular(28),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 20,
-                      offset: Offset(0, -5),
+              decoration: const BoxDecoration(
+                color: Color(0xFF1A1A1A),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Handle bar
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
                     ),
-                  ],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(28),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Title Input
+                  _buildInputField(
+                    label: 'Task Title',
+                    hint: 'What needs to be done?',
+                    icon: Icons.title_rounded,
+                    initialValue: formState.title,
+                    onChanged: (value) => context.read<AddTodoFormCubit>().updateTitle(value),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Description Input
+                  _buildInputField(
+                    label: 'Description (Optional)',
+                    hint: 'Add more details...',
+                    icon: Icons.description_outlined,
+                    maxLines: 3,
+                    initialValue: formState.description,
+                    onChanged: (value) => context.read<AddTodoFormCubit>().updateDescription(value),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // DateTime Picker
+                  DateTimePicker(
+                    initialDate: formState.dueDate,
+                    initialTime: formState.time,
+                    onDateChanged: (date) => context.read<AddTodoFormCubit>().updateDueDate(date),
+                    onTimeChanged: (time) => context.read<AddTodoFormCubit>().updateTime(time),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Action Buttons
+                  Row(
                     children: [
-                      // Handle bar
-                      Center(
-                        child: Container(
-                          width: 50,
-                          height: 5,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.3),
-                            borderRadius: BorderRadius.circular(3),
+                      Expanded(
+                        child: TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: Text(
+                            'Cancel',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.7),
+                              fontSize: 14,
+                            ),
                           ),
                         ),
                       ),
-                      const SizedBox(height: 28),
-      
-                      // Header
-                      Row(
-                        children: [
-                          Container(
-                            width: 48,
-                            height: 48,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  const Color(0xFF1E6F9F),
-                                  const Color(0xFF1E6F9F).withOpacity(0.8),
-                                ],
-                              ),
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                            child: const Icon(
-                              Icons.add_task_rounded,
-                              color: Colors.white,
-                              size: 24,
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: formState.isValid
+                              ? () => _addTodo(context, formState)
+                              : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: formState.isValid
+                                ? const Color(0xFF1E6F9F)
+                                : Colors.grey.withOpacity(0.3),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          const SizedBox(width: 16),
-                          const Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Create New Task',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: -0.3,
-                                ),
-                              ),
-                              Text(
-                                'Add a new task to your list',
-                                style: TextStyle(
-                                  color: Colors.white54,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 32),
-      
-                      // Title Input
-                      _buildInputField(
-                        controller: _titleController,
-                        label: 'Task Title',
-                        hint: 'What needs to be done?',
-                        icon: Icons.title_rounded,
-                      ),
-                      const SizedBox(height: 20),
-      
-                      // Description Input
-                      _buildInputField(
-                        controller: _descriptionController,
-                        label: 'Description (Optional)',
-                        hint: 'Add more details...',
-                        icon: Icons.description_outlined,
-                        maxLines: 3,
-                      ),
-                      const SizedBox(height: 20),
-      
-                      // Due Date & Time Selector
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Due Date & Time (Optional)',
+                          child: const Text(
+                            'Create',
                             style: TextStyle(
-                              color: Colors.white.withOpacity(0.8),
+                              color: Colors.white,
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          const SizedBox(height: 8),
-                          GestureDetector(
-                            onTap: _selectDueDate,
-                            child: Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.08),
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(
-                                  color: Colors.white.withOpacity(0.1),
-                                  width: 1,
-                                ),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.schedule_rounded,
-                                    color: Colors.white.withOpacity(0.7),
-                                    size: 20,
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Text(
-                                      _selectedDueDate == null
-                                          ? 'Set due date and time'
-                                          : 'Due: ${_formatDateTime(_selectedDueDate!, _selectedTime)}',
-                                      style: TextStyle(
-                                        color: _selectedDueDate == null
-                                            ? Colors.white.withOpacity(0.5)
-                                            : Colors.white,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                  if (_selectedDueDate != null)
-                                    GestureDetector(
-                                      onTap: () => setState(() {
-                                        _selectedDueDate = null;
-                                        _selectedTime = null;
-                                      }),
-                                      child: Icon(
-                                        Icons.close_rounded,
-                                        color: Colors.white.withOpacity(0.5),
-                                        size: 20,
-                                      ),
-                                    ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
-                      const SizedBox(height: 32),
-      
-                      // Action Buttons
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              style: TextButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(vertical: 16),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                ),
-                              ),
-                              child: Text(
-                                'Cancel',
-                                style: TextStyle(
-                                  color: Colors.white.withOpacity(0.7),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    const Color(0xFF1E6F9F),
-                                    const Color(0xFF1E6F9F).withOpacity(0.8),
-                                  ],
-                                ),
-                                borderRadius: BorderRadius.circular(14),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color(0xFF1E6F9F).withOpacity(0.3),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ],
-                              ),
-                              child: ElevatedButton(
-                                onPressed: _addTodo,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.transparent,
-                                  shadowColor: Colors.transparent,
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(14),
-                                  ),
-                                ),
-                                child: const Text(
-                                  'Create Task',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
                     ],
                   ),
-                ),
+                  const SizedBox(height: 16),
+                ],
               ),
             ),
+          );
+        },
+      ),
     );
   }
 
   Widget _buildInputField({
-    required TextEditingController controller,
     required String label,
     required String hint,
     required IconData icon,
     int maxLines = 1,
+    String initialValue = '',
+    required Function(String) onChanged,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -388,29 +187,22 @@ context.read<TodoBloc>().add(AddTodoEvent(
         Container(
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.08),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: Colors.white.withOpacity(0.1),
-              width: 1,
-            ),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.white.withOpacity(0.1)),
           ),
-          child: TextField(
-            controller: controller,
+          child: TextFormField(
+            initialValue: initialValue,
             maxLines: maxLines,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
+            style: const TextStyle(color: Colors.white, fontSize: 14),
             decoration: InputDecoration(
               hintText: hint,
               hintStyle: TextStyle(
                 color: Colors.white.withOpacity(0.5),
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
+                fontSize: 14,
               ),
               border: InputBorder.none,
-              contentPadding: const EdgeInsets.all(16),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               prefixIcon: Icon(
                 icon,
                 color: Colors.white.withOpacity(0.6),
@@ -418,34 +210,10 @@ context.read<TodoBloc>().add(AddTodoEvent(
               ),
             ),
             textCapitalization: TextCapitalization.sentences,
-            onSubmitted: maxLines == 1 ? (_) => _addTodo() : null,
+            onChanged: onChanged,
           ),
         ),
       ],
     );
-  }
-
-  String _formatDateTime(DateTime date, TimeOfDay? time) {
-    final now = DateTime.now();
-    final difference = date.difference(now).inDays;
-    
-    String dateStr;
-    if (difference == 0) {
-      dateStr = 'Today';
-    } else if (difference == 1) {
-      dateStr = 'Tomorrow';
-    } else {
-      final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      dateStr = '${date.day} ${months[date.month - 1]}';
-    }
-
-    if (time != null) {
-      final hour = time.hour.toString().padLeft(2, '0');
-      final minute = time.minute.toString().padLeft(2, '0');
-      return '$dateStr at $hour:$minute';
-    }
-
-    return dateStr;
   }
 }

@@ -27,7 +27,7 @@ Future<Either<String, TodoEntity>> addTodo(AddTodoParams params) async {
   final result = await _service.addTodo(params);
   return result.fold(
     (l) => Left(l),
-    (r) => Right(r.toEntity()),
+    (r) => Right(r.toEntity(                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    )),
   );
 }
 

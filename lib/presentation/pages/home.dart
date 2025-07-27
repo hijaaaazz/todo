@@ -193,7 +193,6 @@ class _TodoPageState extends State<TodoPage> with TickerProviderStateMixin {
     
                       if (state is TodoLoaded) {
                         return TodoSection(
-                          onDelete: _showDeleteBottomSheet,
                         );
                       }
     

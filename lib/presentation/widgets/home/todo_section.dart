@@ -1,21 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tudu/domain/enities/todo_entity.dart';
-import 'package:tudu/presentation/bloc/auth/auth_cubit.dart';
-import 'package:tudu/presentation/bloc/auth/auth_state.dart';
 import 'package:tudu/presentation/bloc/bloc/todo_bloc.dart';
-import 'package:tudu/presentation/bloc/bloc/todo_event.dart';
 import 'package:tudu/presentation/bloc/bloc/todo_state.dart';
 import 'package:tudu/presentation/widgets/home/stats.dart';
 import 'package:tudu/presentation/widgets/home/todo_item.dart';
 
 class TodoSection extends StatelessWidget {
-  final Function(TodoEntity) onDelete;
-
-  const TodoSection({
-    super.key,
-    required this.onDelete,
-  });
+  const TodoSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,20 +15,8 @@ class TodoSection extends StatelessWidget {
       builder: (context, state) {
         if (state is! TodoLoaded) return const SizedBox.shrink();
 
-        // Get todos based on the selected tab
-        final todosByDueDate = state.todosByDueDate;
-        final isActiveTab = state.selectedTab == 'Active';
-        final isCompletedTab = state.selectedTab == 'Completed';
-
-        // Filter todos by due date based on selected tab
-        final filteredTodosByDueDate = todosByDueDate.map((key, todos) {
-          final filteredTodos = todos.where((todo) {
-            if (isActiveTab) return !todo.isCompleted;
-            if (isCompletedTab) return todo.isCompleted;
-            return true; // For 'Total' tab, include all todos
-          }).toList();
-          return MapEntry(key, filteredTodos);
-        });
+        // BLoC now handles all filtering logic
+        final todosByDueDate = state.displayTodosByDueDate;
 
         return SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -46,9 +26,9 @@ class TodoSection extends StatelessWidget {
               const StatsOverview(),
               const SizedBox(height: 32),
 
-              if (state.todos.isEmpty) _buildEmptyState(),
+              if (state.allTodos.isEmpty) _buildEmptyState(),
 
-              ...filteredTodosByDueDate.entries
+              ...todosByDueDate.entries
                   .where((entry) => entry.value.isNotEmpty)
                   .map((entry) {
                 return Column(
@@ -66,23 +46,7 @@ class TodoSection extends StatelessWidget {
                                   : Icons.calendar_month_rounded,
                     ),
                     const SizedBox(height: 20),
-                    ...entry.value.map((todo) => TodoItem(
-                          todo: todo,
-                          onToggle: () {
-                            final authState = context.read<AuthCubit>().state;
-                            final userId = authState is Authenticated
-                                ? authState.user.id
-                                : "";
-                            context.read<TodoBloc>().add(
-                                  ToggleTodo(
-                                    id: todo.id,
-                                    userId: userId,
-                                    status: !todo.isCompleted,
-                                  ),
-                                );
-                          },
-                          onDelete: () => onDelete(todo),
-                        )),
+                    ...entry.value.map((todo) => TodoItem(todo: todo)),
                     const SizedBox(height: 32),
                   ],
                 );

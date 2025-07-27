@@ -1,46 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tudu/data/models/tab_item.dart';
 import 'package:tudu/presentation/bloc/bloc/todo_bloc.dart';
 import 'package:tudu/presentation/bloc/bloc/todo_event.dart';
 import 'package:tudu/presentation/bloc/bloc/todo_state.dart';
 
-class StatsOverview extends StatefulWidget {
+class StatsOverview extends StatelessWidget {
   const StatsOverview({super.key});
 
-  @override
-  State<StatsOverview> createState() => _StatsOverviewState();
-}
-
-class _StatsOverviewState extends State<StatsOverview> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<TodoBloc, TodoState>(
       builder: (context, state) {
         if (state is! TodoLoaded) return const SizedBox();
 
-        final dueDateGroups = state.todosByDueDate;
-        final items = [
-          {'label': 'Active', 'value': state.pendingCount.toString(), 'icon': Icons.radio_button_unchecked_rounded},
-          {'label': 'Completed', 'value': state.completedCount.toString(), 'icon': Icons.check_circle_outline_rounded},
-          {'label': 'Total', 'value': state.totalCount.toString(), 'icon': Icons.task_alt_rounded},
-        ];
-
         return SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
-            children: items.map((item) {
-              final isSelected = state.selectedTab == item['label'];
+            children: TabItem.values.map((tabItem) {
+              final isSelected = state.selectedTab == tabItem;
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: _buildTabItem(
-                  label: item['label'] as String,
-                  value: item['value'] as String,
-                  icon: item['icon'] as IconData,
+                  context: context,
+                  tabItem: tabItem,
+                  value: tabItem.getValue(state),
                   isSelected: isSelected,
-                  onTap: () {
-                    context.read<TodoBloc>().add(SelectTab(item['label'] as String));
-                  },
                 ),
               );
             }).toList(),
@@ -51,14 +37,15 @@ class _StatsOverviewState extends State<StatsOverview> {
   }
 
   Widget _buildTabItem({
-    required String label,
+    required BuildContext context,
+    required TabItem tabItem,
     required String value,
-    required IconData icon,
     required bool isSelected,
-    required VoidCallback onTap,
   }) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () {
+        context.read<TodoBloc>().add(SelectTab(tabItem));
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
@@ -88,11 +75,11 @@ class _StatsOverviewState extends State<StatsOverview> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: Colors.white, size: 18),
+            Icon(tabItem.icon, color: Colors.white, size: 18),
             const SizedBox(width: 8),
             Text(
-              "$value $label",
-              style: TextStyle(
+              "$value ${tabItem.label}",
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 12,
                 fontWeight: FontWeight.w800,

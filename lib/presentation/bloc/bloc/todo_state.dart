@@ -1,54 +1,95 @@
+import 'package:tudu/data/models/tab_item.dart';
 import 'package:tudu/domain/enities/todo_entity.dart';
 
 abstract class TodoState {
   const TodoState();
-
-  @override
-  List<Object?> get props => [];
 }
 
 class TodoInitial extends TodoState {}
 
 class TodoLoading extends TodoState {}
 
+class TodoError extends TodoState {
+  final String message;
+  const TodoError(this.message);
+}
+
 class TodoLoaded extends TodoState {
-  final List<TodoEntity> todos;
+  final List<TodoEntity> allTodos;
+  final TabItem selectedTab;
   final String searchQuery;
-  final DateTime? searchDate;
-  final String selectedTab; // New field to track selected tab
+  final Map<String, List<TodoEntity>> displayTodosByDueDate;
+  final int totalTasks;
+  final int completedTasks;
+  final int pendingTasks;
 
   const TodoLoaded({
-    required this.todos,
+    required this.allTodos,
+    this.selectedTab = TabItem.total,
     this.searchQuery = '',
-    this.searchDate,
-    this.selectedTab = 'Total', // Default to Total
+    required this.displayTodosByDueDate,
+    required this.totalTasks,
+    required this.completedTasks,
+    required this.pendingTasks,
   });
 
-  // Group todos by due date for StatsOverview
-  Map<String, List<TodoEntity>> get todosByDueDate {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final tomorrow = today.add(const Duration(days: 1));
-    final nextWeek = today.add(const Duration(days: 7));
+  // Computed properties
+  List<TodoEntity> get displayTodos {
+    List<TodoEntity> filteredTodos = _getFilteredTodosByTab();
+    
+    if (searchQuery.isNotEmpty) {
+      filteredTodos = filteredTodos.where((todo) {
+        return todo.text.toLowerCase().contains(searchQuery.toLowerCase()) ||
+            (todo.description?.toLowerCase().contains(searchQuery.toLowerCase()) ?? false);
+      }).toList();
+    }
+    
+    return filteredTodos;
+  }
 
-    final grouped = <String, List<TodoEntity>>{
+  List<TodoEntity> _getFilteredTodosByTab() {
+    switch (selectedTab) {
+      case 'Active':
+        return allTodos.where((todo) => !todo.isCompleted).toList();
+      case 'Completed':
+        return allTodos.where((todo) => todo.isCompleted).toList();
+      case 'Total':
+      default:
+        return allTodos;
+    }
+  }
+
+  // Group todos by due date for display
+  static Map<String, List<TodoEntity>> _groupTodosByDate(List<TodoEntity> todos) {
+    final Map<String, List<TodoEntity>> grouped = {
       'Today': [],
       'Tomorrow': [],
       'This Week': [],
       'Later': [],
     };
 
-    for (var todo in filteredTodos) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final tomorrow = today.add(const Duration(days: 1));
+    final endOfWeek = today.add(Duration(days: 7 - today.weekday));
+
+    for (final todo in todos) {
       if (todo.dueDate == null) {
         grouped['Later']!.add(todo);
         continue;
       }
-      final dueDate = DateTime(todo.dueDate!.year, todo.dueDate!.month, todo.dueDate!.day);
-      if (dueDate.isAtSameMomentAs(today)) {
+
+      final dueDate = DateTime(
+        todo.dueDate!.year,
+        todo.dueDate!.month,
+        todo.dueDate!.day,
+      );
+
+      if (dueDate == today) {
         grouped['Today']!.add(todo);
-      } else if (dueDate.isAtSameMomentAs(tomorrow)) {
+      } else if (dueDate == tomorrow) {
         grouped['Tomorrow']!.add(todo);
-      } else if (dueDate.isAfter(today) && dueDate.isBefore(nextWeek)) {
+      } else if (dueDate.isAfter(tomorrow) && dueDate.isBefore(endOfWeek.add(const Duration(days: 1)))) {
         grouped['This Week']!.add(todo);
       } else {
         grouped['Later']!.add(todo);
@@ -58,94 +99,57 @@ class TodoLoaded extends TodoState {
     return grouped;
   }
 
-  List<TodoEntity> get filteredTodos {
-    var filtered = todos;
+  TodoLoaded copyWith({
+    List<TodoEntity>? allTodos,
+    TabItem? selectedTab,
+    String? searchQuery,
+  }) {
+    final newAllTodos = allTodos ?? this.allTodos;
+    final newSelectedTab = selectedTab ?? this.selectedTab;
+    final newSearchQuery = searchQuery ?? this.searchQuery;
 
-    if (searchQuery.isNotEmpty) {
-      filtered = filtered
-          .where((todo) =>
-              todo.text.toLowerCase().contains(searchQuery.toLowerCase()) ||
-              (todo.description?.toLowerCase().contains(searchQuery.toLowerCase()) ?? false))
-          .toList();
-    }
-
-    if (searchDate != null) {
-      filtered = filtered.where((todo) {
-        if (todo.dueDate == null) return false;
-        final todoDate = DateTime(
-          todo.dueDate!.year,
-          todo.dueDate!.month,
-          todo.dueDate!.day,
-        );
-        final filterDate = DateTime(
-          searchDate!.year,
-          searchDate!.month,
-          searchDate!.day,
-        );
-        return todoDate.isAtSameMomentAs(filterDate);
+    // Create filtered todos based on tab selection and search
+    List<TodoEntity> filteredTodos = _getFilteredTodosByTabStatic(newAllTodos, newSelectedTab);
+    
+    if (newSearchQuery.isNotEmpty) {
+      filteredTodos = filteredTodos.where((todo) {
+        return todo.text.toLowerCase().contains(newSearchQuery.toLowerCase()) ||
+            (todo.description?.toLowerCase().contains(newSearchQuery.toLowerCase()) ?? false);
       }).toList();
     }
 
-    return filtered..sort((a, b) {
-        if (a.dueDate == null && b.dueDate == null) return 0;
-        if (a.dueDate == null) return 1;
-        if (b.dueDate == null) return -1;
-        return a.dueDate!.compareTo(b.dueDate!);
-      });
-  }
-
-  List<TodoEntity> get activeTodos {
-    final now = DateTime.now();
-    return filteredTodos.where((todo) {
-      if (todo.isCompleted) return false;
-      if (todo.dueDate == null) return true;
-      return todo.dueDate!.isAfter(now);
-    }).toList();
-  }
-
-  List<TodoEntity> get expiredTodos {
-    final now = DateTime.now();
-    return filteredTodos.where((todo) {
-      if (todo.isCompleted) return false;
-      if (todo.dueDate == null) return false;
-      return todo.dueDate!.isBefore(now);
-    }).toList();
-  }
-
-  List<TodoEntity> get completedTodos =>
-      filteredTodos.where((todo) => todo.isCompleted).toList();
-
-  List<TodoEntity> get pendingTodos =>
-      filteredTodos.where((todo) => !todo.isCompleted).toList();
-
-  int get pendingCount => pendingTodos.length;
-  int get completedCount => completedTodos.length;
-  int get totalCount => filteredTodos.length;
-
-  TodoLoaded copyWith({
-    List<TodoEntity>? todos,
-    String? searchQuery,
-    DateTime? searchDate,
-    bool clearSearchDate = false,
-    String? selectedTab,
-  }) {
     return TodoLoaded(
-      todos: todos ?? this.todos,
-      searchQuery: searchQuery ?? this.searchQuery,
-      searchDate: clearSearchDate ? null : (searchDate ?? this.searchDate),
-      selectedTab: selectedTab ?? this.selectedTab,
+      allTodos: newAllTodos,
+      selectedTab: newSelectedTab,
+      searchQuery: newSearchQuery,
+      displayTodosByDueDate: _groupTodosByDate(filteredTodos),
+      totalTasks: newAllTodos.length,
+      completedTasks: newAllTodos.where((todo) => todo.isCompleted).length,
+      pendingTasks: newAllTodos.where((todo) => !todo.isCompleted).length,
     );
   }
 
-  @override
-  List<Object?> get props => [todos, searchQuery, searchDate, selectedTab];
-}
+  static List<TodoEntity> _getFilteredTodosByTabStatic(List<TodoEntity> todos, TabItem tab) {
+    switch (tab) {
+      case TabItem.active:
+        return todos.where((todo) => !todo.isCompleted).toList();
+      case TabItem.completed:
+        return todos.where((todo) => todo.isCompleted).toList();
+      case TabItem.total:
+      return todos;
+    }
+  }
 
-class TodoError extends TodoState {
-  final String message;
-
-  const TodoError(this.message);
-
-  @override
-  List<Object> get props => [message];
+  // Factory constructor for initial load
+  factory TodoLoaded.initial(List<TodoEntity> todos) {
+    return TodoLoaded(
+      allTodos: todos,
+      selectedTab: TabItem.total,
+      searchQuery: '',
+      displayTodosByDueDate: _groupTodosByDate(todos),
+      totalTasks: todos.length,
+      completedTasks: todos.where((todo) => todo.isCompleted).length,
+      pendingTasks: todos.where((todo) => !todo.isCompleted).length,
+    );
+  }
 }

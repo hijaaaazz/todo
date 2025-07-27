@@ -1,3 +1,5 @@
+import 'package:tudu/data/models/tab_item.dart';
+
 abstract class TodoEvent {
   const TodoEvent();
 
@@ -29,11 +31,12 @@ class AddTodoEvent extends TodoEvent {
 
 class UpdateTodo extends TodoEvent {
   final String id;
-  final String text;
+  final String? text;
   final String? description;
   final DateTime? dueDate;
+  final String userId;
 
-  const UpdateTodo(this.id, this.text, {this.description, this.dueDate});
+  const UpdateTodo({required this.id,required this.userId,this.text, this.description, this.dueDate});
 
   @override
   List<Object?> get props => [id, text, description, dueDate];
@@ -81,7 +84,7 @@ class SearchByDate extends TodoEvent {
 class ClearDateFilter extends TodoEvent {}
 
 class SelectTab extends TodoEvent {
-  final String tab;
+  final TabItem tab;
 
   const SelectTab(this.tab);
 
