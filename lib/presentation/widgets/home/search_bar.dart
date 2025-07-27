@@ -39,11 +39,9 @@ class _SearchBarWithButtonState extends State<SearchBarWithButton> {
                 decoration: InputDecoration(
                   hintText: 'Search your tasks...',
                   hintStyle: TextStyle(
-                    color: AppTheme.white.withOpacity(0.5),
                   ),
                   prefixIcon: Icon(
                     Icons.search_rounded,
-                    color: AppTheme.white.withOpacity(0.6),
                     size: 20,
                   ),
                   enabledBorder: InputBorder.none,

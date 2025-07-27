@@ -67,7 +67,6 @@ class _TodoPageState extends State<TodoPage> with TickerProviderStateMixin {
         }
       },
       child: Scaffold(
-        backgroundColor: AppTheme.background,
         body: SafeArea(
           child: Column(
             children: [

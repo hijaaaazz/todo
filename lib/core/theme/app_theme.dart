@@ -1,7 +1,15 @@
+// ignore_for_file: unused_field
+
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // Base Colors
+  static ThemeMode currentThemeMode = ThemeMode.light;
+
+  static void setThemeMode(ThemeMode mode) {
+    currentThemeMode = mode;
+  }
+
+  // Base Colors (unchanged directly, used internally)
   static const Color _white = Colors.white;
   static const Color _black = Colors.black;
   static const Color _red = Colors.red;
@@ -13,25 +21,25 @@ class AppTheme {
   static const Color _orangeAccent = Colors.orangeAccent;
   static const Color _amber = Colors.amber;
 
-  // Public Getters
-  static Color get white => _white;
-  static Color get black => _black;
+  // Public Getters - adapt to current theme
+  static Color get white => Colors.white ;
+  static Color get black => Colors.black ;
   static Color get red => _red;
   static Color get orange => _orange;
   static Color get yellow => _yellow;
-  static Color get grey => _grey;
+  static Color get grey =>  Colors.grey.shade300 ;
   static Color get redAccent => _redAccent;
   static Color get orangeAccent => _orangeAccent;
   static Color get amber => _amber;
   static Color get transparent => _transparent;
   static Color get highlight => const Color(0xFF1E6F9F);
-  static const Color background = Color(0xFF1A1A1A); // for dark
-  static const Color lightBackground = Color(0xFFF5F5F5); // for light
+  // Static Backgrounds
+  static const Color background = Color(0xFF1A1A1A);
 
   // Todo-related colors with opacity
   static _TodoColors get todoColors => _TodoColors();
 
-  // Dark Theme
+  // DARK THEME
   static ThemeData get darkTheme {
     return ThemeData(
       brightness: Brightness.dark,
@@ -73,50 +81,9 @@ class AppTheme {
     );
   }
 
-  // Light Theme
-  static ThemeData get lightTheme {
-    return ThemeData(
-      brightness: Brightness.light,
-      scaffoldBackgroundColor: lightBackground,
-      primaryColor: highlight,
-      colorScheme: ColorScheme.light(
-        primary: highlight,
-        secondary: highlight,
-        background: lightBackground,
-        error: red,
-      ),
-      textTheme: TextTheme(
-        bodyLarge: TextStyle(color: black),
-        bodyMedium: TextStyle(color: black),
-        bodySmall: TextStyle(color: black),
-        headlineSmall: TextStyle(color: black),
-        titleMedium: TextStyle(color: black),
-      ),
-      appBarTheme: AppBarTheme(
-        backgroundColor: lightBackground,
-        foregroundColor: black,
-        elevation: 0,
-      ),
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: highlight,
-          foregroundColor: white,
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
-      ),
-      textButtonTheme: TextButtonThemeData(
-        style: TextButton.styleFrom(
-          foregroundColor: highlight,
-        ),
-      ),
-    );
-  }
 }
 
-// 🔽 Nested Todo Color Class
+// 🔽 Theme-aware Todo Colors
 class _TodoColors {
   Color get normal => AppTheme.white.withOpacity(0.6);
   Color get dueSoon => AppTheme.yellow.withOpacity(0.8);

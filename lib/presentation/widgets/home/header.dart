@@ -50,7 +50,6 @@ children: [
                           style: TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.w800,
-                            color: AppTheme.white,
                             letterSpacing: -0.8,
                           ),
                         ),
@@ -60,7 +59,6 @@ children: [
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
-                            color: AppTheme.white.withOpacity(0.6),
                             letterSpacing: 0.2,
                           ),
                         ),
@@ -96,7 +94,6 @@ children: [
                       ),
                       child:  Icon(
                         Icons.logout,
-                        color: AppTheme.white,
                         size: 24,
                       ),
                     ),

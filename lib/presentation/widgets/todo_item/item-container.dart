@@ -26,7 +26,7 @@ class TodoItemContainer extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isCompleted
-                ? const Color(0xFF1E6F9F).withOpacity(0.3)
+                ?  AppTheme.highlight.withOpacity(0.3)
                 : AppTheme.white.withOpacity(0.1),
             width: 1,
           ),

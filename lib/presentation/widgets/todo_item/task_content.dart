@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tudu/core/theme/app_theme.dart';
 import 'package:tudu/presentation/widgets/todo_item/date_display.dart';
 
 class TodoTaskContent extends StatelessWidget {
@@ -22,11 +21,11 @@ class TodoTaskContent extends StatelessWidget {
         Text(
           text,
           style: TextStyle(
-            color: isCompleted ? AppTheme.white.withOpacity(0.5) : AppTheme.white,
+            color: isCompleted ? Colors.white.withOpacity(0.5) : Colors.white,
             fontSize: 16,
             fontWeight: FontWeight.w600,
             decoration: isCompleted ? TextDecoration.lineThrough : null,
-            decorationColor: AppTheme.white.withOpacity(0.5),
+            decorationColor: Colors.white.withOpacity(0.5),
             decorationThickness: 2,
           ),
         ),

@@ -9,39 +9,37 @@ import 'package:tudu/presentation/bloc/auth/auth_cubit.dart';
 import 'package:tudu/presentation/bloc/bloc/todo_bloc.dart';
 import 'package:tudu/presentation/pages/splash.dart';
 import 'package:tudu/service_locator.dart';
-
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform
-
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
   );
   await initializeDependencies();
-  log(ThemeMode.system.toString());
-  runApp(const MyApp());
+
+  const themeMode = ThemeMode.light; // or ThemeMode.system / ThemeMode.dark
+  log('App using themeMode: $themeMode');
+  AppTheme.setThemeMode(ThemeMode.dark); 
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context)=>AuthCubit()..checkAuthStatus()),
-        BlocProvider(create: (context)=>TodoBloc())
+        BlocProvider(create: (_) => AuthCubit()..checkAuthStatus()),
+        BlocProvider(create: (_) => TodoBloc()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'TuDu',
-        theme: AppTheme.lightTheme,
-        themeMode: ThemeMode.light,
         darkTheme: AppTheme.darkTheme,
-        
-        home: const SplashScreen(),
-        ),
+        themeMode: ThemeMode.dark,
+        home: SplashScreen(),
+      ),
     );
   }
 }
