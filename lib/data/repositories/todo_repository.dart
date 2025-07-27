@@ -1,8 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:tudu/data/models/add_todo_params.dart';
 import 'package:tudu/data/models/delete_todo_params.dart';
-import 'package:tudu/data/models/search_params.dart';
-import 'package:tudu/data/models/todo_model.dart';
 import 'package:tudu/data/models/toggle_todo_params.dart';
 import 'package:tudu/data/models/update_todo_params.dart';
 import 'package:tudu/data/services/todo_service.dart';

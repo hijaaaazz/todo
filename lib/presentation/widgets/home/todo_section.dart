@@ -1,6 +1,7 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tudu/domain/enities/todo_entity.dart';
 import 'package:tudu/presentation/bloc/bloc/todo_bloc.dart';
 import 'package:tudu/presentation/bloc/bloc/todo_state.dart';
 import 'package:tudu/presentation/widgets/home/stats.dart';

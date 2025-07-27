@@ -1,7 +1,10 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tudu/presentation/bloc/auth/auth_cubit.dart';
 import 'package:tudu/presentation/bloc/auth/auth_state.dart';
+import 'package:tudu/presentation/widgets/home/logout_confirmation.dart';
 import 'package:tudu/presentation/widgets/home/search_bar.dart';
 
 class HeaderArea extends StatelessWidget {
@@ -65,7 +68,9 @@ children: [
                   ),
                   InkWell(
                     onTap: (){
-                      context.read<AuthCubit>().logOut();
+                      showDialog(
+                        context: context,
+                        builder: (_) => LogoutConfirmationDialog());
                     },
                     child: Container(
                       width: 52,

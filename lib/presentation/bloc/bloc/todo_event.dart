@@ -3,8 +3,6 @@ import 'package:tudu/data/models/tab_item.dart';
 abstract class TodoEvent {
   const TodoEvent();
 
-  @override
-  List<Object?> get props => [];
 }
 
 class LoadTodos extends TodoEvent {
@@ -25,8 +23,6 @@ class AddTodoEvent extends TodoEvent {
     this.userId,
   });
 
-  @override
-  List<Object?> get props => [text, description, dueDate, userId];
 }
 
 class UpdateTodo extends TodoEvent {
@@ -38,8 +34,6 @@ class UpdateTodo extends TodoEvent {
 
   const UpdateTodo({required this.id,required this.userId,this.text, this.description, this.dueDate});
 
-  @override
-  List<Object?> get props => [id, text, description, dueDate];
 }
 
 class ToggleTodo extends TodoEvent {
@@ -49,8 +43,6 @@ class ToggleTodo extends TodoEvent {
 
   const ToggleTodo({required this.id,required this.userId,required this.status});
 
-  @override
-  List<Object> get props => [id];
 }
 
 class DeleteTodo extends TodoEvent {
@@ -59,8 +51,6 @@ class DeleteTodo extends TodoEvent {
 
   const DeleteTodo({required this.id,required this.userId});
 
-  @override
-  List<Object> get props => [id];
 }
 
 class SearchTodos extends TodoEvent {
@@ -68,8 +58,6 @@ class SearchTodos extends TodoEvent {
 
   const SearchTodos(this.query);
 
-  @override
-  List<Object> get props => [query];
 }
 
 class SearchByDate extends TodoEvent {
@@ -77,8 +65,6 @@ class SearchByDate extends TodoEvent {
 
   const SearchByDate(this.date);
 
-  @override
-  List<Object> get props => [date];
 }
 
 class ClearDateFilter extends TodoEvent {}
@@ -88,6 +74,4 @@ class SelectTab extends TodoEvent {
 
   const SelectTab(this.tab);
 
-  @override
-  List<Object> get props => [tab];
 }
