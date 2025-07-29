@@ -1,16 +1,48 @@
-# tudu
+# TuDu – Task Management App
 
-A new Flutter project.
+**TuDu** is a simple and useful task manager app made using **Flutter**. It uses **Firebase Authentication** for login and **Cloud Firestore** to store your tasks.
 
-## Getting Started
+With TuDu, users can log in and manage their daily tasks from anywhere, anytime.
 
-This project is a starting point for a Flutter application.
+---
 
-A few resources to get you started if this is your first Flutter project:
+## ✨ Features
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- 🔐 **User Login**
+  - Sign up and Sign in with email & password
+  - Safe and secure login using Firebase
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- ✅ **Task Management**
+  - Add, edit, and delete tasks
+  - Mark tasks as done
+  - See all tasks with live updates
+
+- ☁️ **Cloud Storage**
+  - Tasks saved in Firebase Cloud Firestore
+  - Data syncs across devices
+
+- 📱 **Simple Design**
+  - Easy-to-use interface
+  - *(Optional)* Dark mode
+
+---
+
+## 🔥 Technologies Used
+
+- **Flutter** – For building the app
+- **Firebase Authentication** – For login
+- **Firebase Cloud Firestore** – To save tasks
+- **Provider / Bloc / Riverpod** – For state management *(based on your setup)*
+
+---
+
+## 📦 APK Location
+
+the release APK is here:  [⬇️ Gat APK](apk/app-release.apk)
+
+
+
+
+🎬 App Demo Video
+📺 Watch the TuDu app demo on YouTube:
+▶️ https://youtube.com/shorts/CljkyGxLxKI?feature=share
